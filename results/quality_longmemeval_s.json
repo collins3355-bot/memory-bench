@@ -1,0 +1,1382 @@
+{
+  "dataset": "longmemeval_s",
+  "n_instances": 500,
+  "n_abstention": 30,
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "results": {
+    "turn": {
+      "bm25": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8319858156028368,
+          "complete@5": 0.7212765957446808,
+          "turn_recall@5": 0.6640425531914893,
+          "tokens@5": 1022.0276595744681,
+          "session_recall@10": 0.9051063829787234,
+          "complete@10": 0.8297872340425532,
+          "turn_recall@10": 0.753581560283688,
+          "tokens@10": 2240.248936170213,
+          "mrr": 0.893948461126854,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9444444444444444,
+            "complete@5": 0.8888888888888888,
+            "turn_recall@5": 0.8287037037037037,
+            "tokens@5": 888.3888888888889,
+            "session_recall@10": 0.9861111111111112,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.9097222222222222,
+            "tokens@10": 2200.8888888888887,
+            "mrr": 0.9664351851851851,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7084022038567493,
+            "complete@5": 0.4462809917355372,
+            "turn_recall@5": 0.47217630853994486,
+            "tokens@5": 1081.9586776859503,
+            "session_recall@10": 0.8421487603305785,
+            "complete@10": 0.6694214876033058,
+            "turn_recall@10": 0.6271349862258953,
+            "tokens@10": 2420.8512396694214,
+            "mrr": 0.8968909878000787,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 0.8571428571428571,
+            "tokens@5": 1072.4642857142858,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.8928571428571429,
+            "tokens@10": 2256.1785714285716,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.6333333333333333,
+            "complete@5": 0.6333333333333333,
+            "turn_recall@5": 0.28888888888888886,
+            "tokens@5": 727.9,
+            "session_recall@10": 0.8,
+            "complete@10": 0.8,
+            "turn_recall@10": 0.4222222222222222,
+            "tokens@10": 1629.8666666666666,
+            "mrr": 0.44236474504331647,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.984375,
+            "complete@5": 0.984375,
+            "turn_recall@5": 0.8984375,
+            "tokens@5": 1126.1875,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.9296875,
+            "tokens@10": 2136.6875,
+            "mrr": 0.9683779761904762,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.782020997375328,
+            "complete@5": 0.6535433070866141,
+            "turn_recall@5": 0.6388451443569554,
+            "tokens@5": 1035.4409448818897,
+            "session_recall@10": 0.8543307086614174,
+            "complete@10": 0.7480314960629921,
+            "turn_recall@10": 0.7136482939632547,
+            "tokens@10": 2279.8425196850394,
+            "mrr": 0.8724527641337687,
+            "n": 127
+          }
+        }
+      },
+      "vector": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8212765957446808,
+          "complete@5": 0.6808510638297872,
+          "turn_recall@5": 0.5775177304964538,
+          "tokens@5": 1036.8574468085105,
+          "session_recall@10": 0.909468085106383,
+          "complete@10": 0.8319148936170213,
+          "turn_recall@10": 0.7336879432624114,
+          "tokens@10": 2152.7255319148935,
+          "mrr": 0.9032501018773742,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.8611111111111112,
+            "complete@5": 0.75,
+            "turn_recall@5": 0.5833333333333334,
+            "tokens@5": 1091.4444444444443,
+            "session_recall@10": 0.9791666666666666,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.8564814814814815,
+            "tokens@10": 2236.1805555555557,
+            "mrr": 0.9684606481481483,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7447658402203857,
+            "complete@5": 0.47107438016528924,
+            "turn_recall@5": 0.43168044077134987,
+            "tokens@5": 1094.2561983471073,
+            "session_recall@10": 0.8800275482093664,
+            "complete@10": 0.71900826446281,
+            "turn_recall@10": 0.6165289256198346,
+            "tokens@10": 2245.719008264463,
+            "mrr": 0.9099567099567101,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 0.8571428571428571,
+            "tokens@5": 839.0535714285714,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.9821428571428571,
+            "tokens@10": 1601.2142857142858,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8666666666666667,
+            "complete@5": 0.8666666666666667,
+            "turn_recall@5": 0.5777777777777777,
+            "tokens@5": 1242.7333333333333,
+            "session_recall@10": 0.9333333333333333,
+            "complete@10": 0.9333333333333333,
+            "turn_recall@10": 0.65,
+            "tokens@10": 2548.9666666666667,
+            "mrr": 0.7799221611721612,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.953125,
+            "complete@5": 0.953125,
+            "turn_recall@5": 0.8203125,
+            "tokens@5": 1066.15625,
+            "session_recall@10": 0.953125,
+            "complete@10": 0.953125,
+            "turn_recall@10": 0.8828125,
+            "tokens@10": 2276.640625,
+            "mrr": 0.8884041580878471,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.7156167979002624,
+            "complete@5": 0.5196850393700787,
+            "turn_recall@5": 0.46745406824146984,
+            "tokens@5": 975.0472440944882,
+            "session_recall@10": 0.8304461942257217,
+            "complete@10": 0.7007874015748031,
+            "turn_recall@10": 0.610761154855643,
+            "tokens@10": 2103.952755905512,
+            "mrr": 0.8538432154185062,
+            "n": 127
+          }
+        }
+      },
+      "hybrid": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8767730496453902,
+          "complete@5": 0.774468085106383,
+          "turn_recall@5": 0.6881560283687943,
+          "tokens@5": 1083.963829787234,
+          "session_recall@10": 0.9454255319148936,
+          "complete@10": 0.8808510638297873,
+          "turn_recall@10": 0.8130496453900709,
+          "tokens@10": 2359.1531914893617,
+          "mrr": 0.9213705832913436,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9375,
+            "complete@5": 0.875,
+            "turn_recall@5": 0.7800925925925927,
+            "tokens@5": 1005.8888888888889,
+            "session_recall@10": 0.9861111111111112,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.9560185185185185,
+            "tokens@10": 2292.8611111111113,
+            "mrr": 0.9777777777777779,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7973829201101928,
+            "complete@5": 0.5785123966942148,
+            "turn_recall@5": 0.5308539944903581,
+            "tokens@5": 1092.0661157024792,
+            "session_recall@10": 0.9074380165289258,
+            "complete@10": 0.7851239669421488,
+            "turn_recall@10": 0.696694214876033,
+            "tokens@10": 2473.6446280991736,
+            "mrr": 0.9287042502951594,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 0.875,
+            "tokens@5": 1048.892857142857,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.9464285714285714,
+            "tokens@10": 2024.5357142857142,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.9,
+            "complete@5": 0.9,
+            "turn_recall@5": 0.55,
+            "tokens@5": 1049.8333333333333,
+            "session_recall@10": 0.9666666666666667,
+            "complete@10": 0.9666666666666667,
+            "turn_recall@10": 0.6666666666666666,
+            "tokens@10": 2109.733333333333,
+            "mrr": 0.7169494047619047,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.984375,
+            "complete@5": 0.984375,
+            "turn_recall@5": 0.9296875,
+            "tokens@5": 1132.21875,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.9296875,
+            "tokens@10": 2418.9375,
+            "mrr": 0.965625,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.8039370078740158,
+            "complete@5": 0.6692913385826772,
+            "turn_recall@5": 0.6144356955380578,
+            "tokens@5": 1119.716535433071,
+            "session_recall@10": 0.9019685039370079,
+            "complete@10": 0.7874015748031497,
+            "turn_recall@10": 0.7598425196850394,
+            "tokens@10": 2463.9921259842517,
+            "mrr": 0.8737202969949612,
+            "n": 127
+          }
+        }
+      },
+      "vector_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.3502482269503546,
+          "complete@5": 0.1595744680851064,
+          "turn_recall@5": 0.25365248226950354,
+          "tokens@5": 985.9170212765957,
+          "session_recall@10": 0.5126595744680851,
+          "complete@10": 0.3,
+          "turn_recall@10": 0.38734042553191494,
+          "tokens@10": 2085.4021276595745,
+          "mrr": 0.4392201957606166,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.3611111111111111,
+            "complete@5": 0.027777777777777776,
+            "turn_recall@5": 0.26620370370370366,
+            "tokens@5": 1030.513888888889,
+            "session_recall@10": 0.4652777777777778,
+            "complete@10": 0.09722222222222222,
+            "turn_recall@10": 0.4027777777777778,
+            "tokens@10": 2106.3333333333335,
+            "mrr": 0.5269118767035433,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.3196969696969697,
+            "complete@5": 0.04132231404958678,
+            "turn_recall@5": 0.21198347107438015,
+            "tokens@5": 1020.1074380165289,
+            "session_recall@10": 0.46487603305785125,
+            "complete@10": 0.1487603305785124,
+            "turn_recall@10": 0.3298898071625344,
+            "tokens@10": 2162.2975206611573,
+            "mrr": 0.511078629522152,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.32142857142857145,
+            "complete@5": 0.32142857142857145,
+            "turn_recall@5": 0.25,
+            "tokens@5": 832.3928571428571,
+            "session_recall@10": 0.625,
+            "complete@10": 0.625,
+            "turn_recall@10": 0.39285714285714285,
+            "tokens@10": 1625.3035714285713,
+            "mrr": 0.2872125308266612,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.36666666666666664,
+            "complete@5": 0.36666666666666664,
+            "turn_recall@5": 0.28888888888888886,
+            "tokens@5": 1198.5,
+            "session_recall@10": 0.6333333333333333,
+            "complete@10": 0.6333333333333333,
+            "turn_recall@10": 0.3722222222222222,
+            "tokens@10": 2467.366666666667,
+            "mrr": 0.3323512160142595,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.421875,
+            "complete@5": 0.421875,
+            "turn_recall@5": 0.3203125,
+            "tokens@5": 950.171875,
+            "session_recall@10": 0.53125,
+            "complete@10": 0.53125,
+            "turn_recall@10": 0.453125,
+            "tokens@10": 2082.9375,
+            "mrr": 0.2862291285345808,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.34593175853018376,
+            "complete@5": 0.09448818897637795,
+            "turn_recall@5": 0.24593175853018373,
+            "tokens@5": 963.5511811023622,
+            "session_recall@10": 0.4976377952755906,
+            "complete@10": 0.2204724409448819,
+            "turn_recall@10": 0.40131233595800525,
+            "tokens@10": 2114.165354330709,
+            "mrr": 0.49041118330488415,
+            "n": 127
+          }
+        }
+      },
+      "hybrid_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.7722340425531915,
+          "complete@5": 0.6063829787234043,
+          "turn_recall@5": 0.6091489361702127,
+          "tokens@5": 1091.9,
+          "session_recall@10": 0.9160283687943261,
+          "complete@10": 0.8340425531914893,
+          "turn_recall@10": 0.785354609929078,
+          "tokens@10": 2332.6574468085105,
+          "mrr": 0.8358818068005767,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.75,
+            "complete@5": 0.5138888888888888,
+            "turn_recall@5": 0.6342592592592593,
+            "tokens@5": 1091.75,
+            "session_recall@10": 0.9652777777777778,
+            "complete@10": 0.9305555555555556,
+            "turn_recall@10": 0.9074074074074073,
+            "tokens@10": 2280.0,
+            "mrr": 0.9282407407407409,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.675068870523416,
+            "complete@5": 0.3884297520661157,
+            "turn_recall@5": 0.4258953168044077,
+            "tokens@5": 1106.1157024793388,
+            "session_recall@10": 0.8763085399449035,
+            "complete@10": 0.7272727272727273,
+            "turn_recall@10": 0.6555096418732782,
+            "tokens@10": 2442.6446280991736,
+            "mrr": 0.8655024727338777,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 0.8571428571428571,
+            "tokens@5": 1091.5892857142858,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.9464285714285714,
+            "tokens@10": 2028.7857142857142,
+            "mrr": 0.8800595238095238,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.7666666666666667,
+            "complete@5": 0.7666666666666667,
+            "turn_recall@5": 0.4722222222222222,
+            "tokens@5": 1043.8333333333333,
+            "session_recall@10": 0.9333333333333333,
+            "complete@10": 0.9333333333333333,
+            "turn_recall@10": 0.6,
+            "tokens@10": 2269.866666666667,
+            "mrr": 0.6506700494405411,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.921875,
+            "complete@5": 0.921875,
+            "turn_recall@5": 0.859375,
+            "tokens@5": 1058.125,
+            "session_recall@10": 0.984375,
+            "complete@10": 0.984375,
+            "turn_recall@10": 0.9375,
+            "tokens@10": 2286.234375,
+            "mrr": 0.7724989557226399,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.7028871391076116,
+            "complete@5": 0.49606299212598426,
+            "turn_recall@5": 0.5664041994750656,
+            "tokens@5": 1106.9527559055118,
+            "session_recall@10": 0.8503937007874016,
+            "complete@10": 0.7086614173228346,
+            "turn_recall@10": 0.7359580052493438,
+            "tokens@10": 2429.9370078740158,
+            "mrr": 0.8115114069239369,
+            "n": 127
+          }
+        }
+      }
+    },
+    "window": {
+      "bm25": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8220921985815602,
+          "complete@5": 0.7127659574468085,
+          "turn_recall@5": 0.7476241134751773,
+          "tokens@5": 5160.934042553192,
+          "session_recall@10": 0.8967021276595745,
+          "complete@10": 0.8085106382978723,
+          "turn_recall@10": 0.8414893617021276,
+          "tokens@10": 10307.489361702128,
+          "mrr": 0.8845792137847246,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9583333333333334,
+            "complete@5": 0.9166666666666666,
+            "turn_recall@5": 0.8842592592592593,
+            "tokens@5": 5337.111111111111,
+            "session_recall@10": 0.9861111111111112,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.9884259259259258,
+            "tokens@10": 10726.472222222223,
+            "mrr": 0.9664351851851851,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.6960055096418732,
+            "complete@5": 0.4297520661157025,
+            "turn_recall@5": 0.5582644628099175,
+            "tokens@5": 5340.801652892562,
+            "session_recall@10": 0.834297520661157,
+            "complete@10": 0.6363636363636364,
+            "turn_recall@10": 0.6961432506887052,
+            "tokens@10": 10521.793388429753,
+            "mrr": 0.8771402614149229,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 1.0,
+            "tokens@5": 3466.089285714286,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 8199.05357142857,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.6666666666666666,
+            "complete@5": 0.6666666666666666,
+            "turn_recall@5": 0.65,
+            "tokens@5": 5633.9,
+            "session_recall@10": 0.7,
+            "complete@10": 0.7,
+            "turn_recall@10": 0.6666666666666666,
+            "tokens@10": 11115.266666666666,
+            "mrr": 0.5259354680806692,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.96875,
+            "complete@5": 0.96875,
+            "turn_recall@5": 0.953125,
+            "tokens@5": 5269.703125,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.984375,
+            "tokens@10": 10042.640625,
+            "mrr": 0.9538194444444444,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.7493438320209973,
+            "complete@5": 0.6220472440944882,
+            "turn_recall@5": 0.6587926509186351,
+            "tokens@5": 5470.48031496063,
+            "session_recall@10": 0.8543307086614174,
+            "complete@10": 0.7244094488188977,
+            "turn_recall@10": 0.7960629921259842,
+            "tokens@10": 10738.133858267716,
+            "mrr": 0.8441922600584018,
+            "n": 127
+          }
+        }
+      },
+      "vector": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8562411347517731,
+          "complete@5": 0.7425531914893617,
+          "turn_recall@5": 0.7169858156028369,
+          "tokens@5": 5032.304255319149,
+          "session_recall@10": 0.9310638297872341,
+          "complete@10": 0.8680851063829788,
+          "turn_recall@10": 0.8485106382978723,
+          "tokens@10": 9877.053191489362,
+          "mrr": 0.8998176961906624,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9305555555555556,
+            "complete@5": 0.875,
+            "turn_recall@5": 0.8171296296296297,
+            "tokens@5": 5262.625,
+            "session_recall@10": 0.9861111111111112,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.9722222222222222,
+            "tokens@10": 10269.208333333334,
+            "mrr": 0.9478174603174604,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7577134986225895,
+            "complete@5": 0.49586776859504134,
+            "turn_recall@5": 0.5709366391184574,
+            "tokens@5": 5289.396694214876,
+            "session_recall@10": 0.9022038567493114,
+            "complete@10": 0.7851239669421488,
+            "turn_recall@10": 0.7818181818181817,
+            "tokens@10": 10449.685950413223,
+            "mrr": 0.9056870356457133,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 1.0,
+            "tokens@5": 3158.2321428571427,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 7267.25,
+            "mrr": 0.9910714285714286,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.9333333333333333,
+            "complete@5": 0.9333333333333333,
+            "turn_recall@5": 0.7055555555555555,
+            "tokens@5": 5796.066666666667,
+            "session_recall@10": 0.9666666666666667,
+            "complete@10": 0.9666666666666667,
+            "turn_recall@10": 0.8277777777777777,
+            "tokens@10": 10936.5,
+            "mrr": 0.7958404558404558,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.9375,
+            "complete@5": 0.9375,
+            "turn_recall@5": 0.875,
+            "tokens@5": 4893.015625,
+            "session_recall@10": 0.953125,
+            "complete@10": 0.953125,
+            "turn_recall@10": 0.921875,
+            "tokens@10": 9340.859375,
+            "mrr": 0.8827946282679738,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.7854330708661418,
+            "complete@5": 0.6456692913385826,
+            "turn_recall@5": 0.5976377952755905,
+            "tokens@5": 5372.921259842519,
+            "session_recall@10": 0.8774278215223097,
+            "complete@10": 0.7637795275590551,
+            "turn_recall@10": 0.7430446194225722,
+            "tokens@10": 10279.874015748032,
+            "mrr": 0.8599154241673926,
+            "n": 127
+          }
+        }
+      },
+      "hybrid": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8785106382978722,
+          "complete@5": 0.776595744680851,
+          "turn_recall@5": 0.7921985815602837,
+          "tokens@5": 5190.536170212766,
+          "session_recall@10": 0.9461347517730496,
+          "complete@10": 0.8872340425531915,
+          "turn_recall@10": 0.8880141843971632,
+          "tokens@10": 10270.434042553192,
+          "mrr": 0.919853465783751,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9791666666666666,
+            "complete@5": 0.9583333333333334,
+            "turn_recall@5": 0.9375,
+            "tokens@5": 5400.305555555556,
+            "session_recall@10": 0.9930555555555556,
+            "complete@10": 0.9861111111111112,
+            "turn_recall@10": 0.9930555555555556,
+            "tokens@10": 10653.583333333334,
+            "mrr": 0.9715277777777778,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7838842975206611,
+            "complete@5": 0.5289256198347108,
+            "turn_recall@5": 0.6154269972451791,
+            "tokens@5": 5367.479338842975,
+            "session_recall@10": 0.9168044077134987,
+            "complete@10": 0.7933884297520661,
+            "turn_recall@10": 0.7966942148760331,
+            "tokens@10": 10630.570247933885,
+            "mrr": 0.9285845467663649,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 1.0,
+            "tokens@5": 3340.7678571428573,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 7795.446428571428,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8666666666666667,
+            "complete@5": 0.8666666666666667,
+            "turn_recall@5": 0.75,
+            "tokens@5": 5747.333333333333,
+            "session_recall@10": 0.9,
+            "complete@10": 0.9,
+            "turn_recall@10": 0.8277777777777777,
+            "tokens@10": 11080.466666666667,
+            "mrr": 0.7356720702465382,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.96875,
+            "complete@5": 0.96875,
+            "turn_recall@5": 0.96875,
+            "tokens@5": 5181.828125,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 0.984375,
+            "tokens@10": 9920.453125,
+            "mrr": 0.956640625,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.8153543307086614,
+            "complete@5": 0.6929133858267716,
+            "turn_recall@5": 0.7076115485564305,
+            "tokens@5": 5591.535433070866,
+            "session_recall@10": 0.90748031496063,
+            "complete@10": 0.8110236220472441,
+            "turn_recall@10": 0.831758530183727,
+            "tokens@10": 10786.448818897637,
+            "mrr": 0.8718680051357217,
+            "n": 127
+          }
+        }
+      },
+      "vector_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.3586170212765957,
+          "complete@5": 0.17872340425531916,
+          "turn_recall@5": 0.31620567375886527,
+          "tokens@5": 4798.046808510639,
+          "session_recall@10": 0.5217730496453901,
+          "complete@10": 0.3021276595744681,
+          "turn_recall@10": 0.465886524822695,
+          "tokens@10": 9497.006382978723,
+          "mrr": 0.44635359885225256,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.3611111111111111,
+            "complete@5": 0.041666666666666664,
+            "turn_recall@5": 0.3449074074074074,
+            "tokens@5": 4957.083333333333,
+            "session_recall@10": 0.4722222222222222,
+            "complete@10": 0.125,
+            "turn_recall@10": 0.45370370370370366,
+            "tokens@10": 9600.763888888889,
+            "mrr": 0.5284480236992493,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.30316804407713493,
+            "complete@5": 0.05785123966942149,
+            "turn_recall@5": 0.22851239669421486,
+            "tokens@5": 5028.586776859504,
+            "session_recall@10": 0.4585399449035813,
+            "complete@10": 0.12396694214876033,
+            "turn_recall@10": 0.3672176308539945,
+            "tokens@10": 9862.892561983472,
+            "mrr": 0.49497504785865304,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.375,
+            "complete@5": 0.375,
+            "turn_recall@5": 0.375,
+            "tokens@5": 3802.625,
+            "session_recall@10": 0.5892857142857143,
+            "complete@10": 0.5892857142857143,
+            "turn_recall@10": 0.5892857142857143,
+            "tokens@10": 7829.25,
+            "mrr": 0.29339901876398733,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.3333333333333333,
+            "complete@5": 0.3333333333333333,
+            "turn_recall@5": 0.25555555555555554,
+            "tokens@5": 4882.033333333334,
+            "session_recall@10": 0.6666666666666666,
+            "complete@10": 0.6666666666666666,
+            "turn_recall@10": 0.5555555555555555,
+            "tokens@10": 9958.733333333334,
+            "mrr": 0.32348743505090244,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.40625,
+            "complete@5": 0.40625,
+            "turn_recall@5": 0.375,
+            "tokens@5": 4647.46875,
+            "session_recall@10": 0.53125,
+            "complete@10": 0.53125,
+            "turn_recall@10": 0.46875,
+            "tokens@10": 9223.90625,
+            "mrr": 0.29051675038360336,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.3847769028871391,
+            "complete@5": 0.13385826771653545,
+            "turn_recall@5": 0.342257217847769,
+            "tokens@5": 4983.204724409449,
+            "session_recall@10": 0.5413385826771654,
+            "complete@10": 0.2440944881889764,
+            "turn_recall@10": 0.48976377952755906,
+            "tokens@10": 9853.527559055117,
+            "mrr": 0.5284875026492504,
+            "n": 127
+          }
+        }
+      },
+      "hybrid_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.7392553191489362,
+          "complete@5": 0.5553191489361702,
+          "turn_recall@5": 0.6605319148936171,
+          "tokens@5": 5122.127659574468,
+          "session_recall@10": 0.9136879432624112,
+          "complete@10": 0.823404255319149,
+          "turn_recall@10": 0.8568439716312057,
+          "tokens@10": 10233.64255319149,
+          "mrr": 0.762507113075629,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.7569444444444444,
+            "complete@5": 0.5416666666666666,
+            "turn_recall@5": 0.7337962962962963,
+            "tokens@5": 5423.875,
+            "session_recall@10": 0.9791666666666666,
+            "complete@10": 0.9583333333333334,
+            "turn_recall@10": 0.9606481481481483,
+            "tokens@10": 10596.25,
+            "mrr": 0.8685185185185186,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.6253443526170799,
+            "complete@5": 0.30578512396694213,
+            "turn_recall@5": 0.5006887052341598,
+            "tokens@5": 5336.743801652892,
+            "session_recall@10": 0.8473829201101928,
+            "complete@10": 0.6363636363636364,
+            "turn_recall@10": 0.7241046831955922,
+            "tokens@10": 10711.479338842975,
+            "mrr": 0.812475064120832,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.9464285714285714,
+            "complete@5": 0.9464285714285714,
+            "turn_recall@5": 0.8928571428571429,
+            "tokens@5": 3468.285714285714,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 7844.392857142857,
+            "mrr": 0.6822420634920635,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8333333333333334,
+            "complete@5": 0.8333333333333334,
+            "turn_recall@5": 0.6555555555555554,
+            "tokens@5": 5701.8,
+            "session_recall@10": 0.9,
+            "complete@10": 0.9,
+            "turn_recall@10": 0.8277777777777777,
+            "tokens@10": 11112.466666666667,
+            "mrr": 0.5721064240419079,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.875,
+            "complete@5": 0.875,
+            "turn_recall@5": 0.859375,
+            "tokens@5": 4995.109375,
+            "session_recall@10": 0.96875,
+            "complete@10": 0.96875,
+            "turn_recall@10": 0.96875,
+            "tokens@10": 9807.390625,
+            "mrr": 0.7011554157647908,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.655774278215223,
+            "complete@5": 0.4015748031496063,
+            "turn_recall@5": 0.5698162729658793,
+            "tokens@5": 5402.913385826771,
+            "session_recall@10": 0.8771653543307087,
+            "complete@10": 0.7559055118110236,
+            "turn_recall@10": 0.8118110236220472,
+            "tokens@10": 10633.543307086615,
+            "mrr": 0.7660852926600957,
+            "n": 127
+          }
+        }
+      }
+    },
+    "session": {
+      "bm25": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.9133333333333333,
+          "complete@5": 0.8340425531914893,
+          "turn_recall@5": 0.914468085106383,
+          "tokens@5": 14662.502127659574,
+          "session_recall@10": 0.9485460992907802,
+          "complete@10": 0.902127659574468,
+          "turn_recall@10": 0.9532624113475177,
+          "tokens@10": 28535.88085106383,
+          "mrr": 0.9018839215991906,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9791666666666666,
+            "complete@5": 0.9583333333333334,
+            "turn_recall@5": 0.9814814814814814,
+            "tokens@5": 14967.402777777777,
+            "session_recall@10": 0.9930555555555556,
+            "complete@10": 0.9861111111111112,
+            "turn_recall@10": 0.9930555555555556,
+            "tokens@10": 28437.944444444445,
+            "mrr": 0.9699074074074073,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.8349862258953168,
+            "complete@5": 0.6528925619834711,
+            "turn_recall@5": 0.8393939393939394,
+            "tokens@5": 14934.247933884297,
+            "session_recall@10": 0.9146005509641874,
+            "complete@10": 0.8181818181818182,
+            "turn_recall@10": 0.9209366391184574,
+            "tokens@10": 28864.057851239668,
+            "mrr": 0.912426210153483,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 1.0,
+            "tokens@5": 12656.0,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 26441.714285714286,
+            "mrr": 1.0,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8666666666666667,
+            "complete@5": 0.8666666666666667,
+            "turn_recall@5": 0.8666666666666667,
+            "tokens@5": 16190.1,
+            "session_recall@10": 0.8666666666666667,
+            "complete@10": 0.8666666666666667,
+            "turn_recall@10": 0.8666666666666667,
+            "tokens@10": 31135.6,
+            "mrr": 0.5500326797385621,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 1.0,
+            "complete@5": 1.0,
+            "turn_recall@5": 1.0,
+            "tokens@5": 14252.140625,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 27297.15625,
+            "mrr": 0.96015625,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.8797900262467192,
+            "complete@5": 0.7716535433070866,
+            "turn_recall@5": 0.8784776902887139,
+            "tokens@5": 14961.44094488189,
+            "session_recall@10": 0.9263779527559055,
+            "complete@10": 0.8503937007874016,
+            "turn_recall@10": 0.9377952755905511,
+            "tokens@10": 29212.27559055118,
+            "mrr": 0.8637602991933699,
+            "n": 127
+          }
+        }
+      },
+      "vector": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8591489361702128,
+          "complete@5": 0.776595744680851,
+          "turn_recall@5": 0.8574113475177305,
+          "tokens@5": 13584.602127659575,
+          "session_recall@10": 0.9279787234042552,
+          "complete@10": 0.8829787234042553,
+          "turn_recall@10": 0.9240425531914893,
+          "tokens@10": 26008.8,
+          "mrr": 0.8342833267415989,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.875,
+            "complete@5": 0.7777777777777778,
+            "turn_recall@5": 0.8773148148148148,
+            "tokens@5": 14224.555555555555,
+            "session_recall@10": 0.9375,
+            "complete@10": 0.875,
+            "turn_recall@10": 0.9375,
+            "tokens@10": 26644.01388888889,
+            "mrr": 0.8627314814814815,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.8573002754820938,
+            "complete@5": 0.7272727272727273,
+            "turn_recall@5": 0.8541322314049586,
+            "tokens@5": 14259.644628099173,
+            "session_recall@10": 0.9330578512396694,
+            "complete@10": 0.859504132231405,
+            "turn_recall@10": 0.9347107438016529,
+            "tokens@10": 26627.30578512397,
+            "mrr": 0.9098780007870917,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.9821428571428571,
+            "complete@5": 0.9821428571428571,
+            "turn_recall@5": 0.9821428571428571,
+            "tokens@5": 10647.535714285714,
+            "session_recall@10": 0.9821428571428571,
+            "complete@10": 0.9821428571428571,
+            "turn_recall@10": 0.9821428571428571,
+            "tokens@10": 23164.85714285714,
+            "mrr": 0.9825680272108844,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8333333333333334,
+            "complete@5": 0.8333333333333334,
+            "turn_recall@5": 0.8333333333333334,
+            "tokens@5": 16054.333333333334,
+            "session_recall@10": 0.9666666666666667,
+            "complete@10": 0.9666666666666667,
+            "turn_recall@10": 0.9666666666666667,
+            "tokens@10": 29729.5,
+            "mrr": 0.6568253968253969,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.8125,
+            "complete@5": 0.8125,
+            "turn_recall@5": 0.8125,
+            "tokens@5": 12738.6875,
+            "session_recall@10": 0.890625,
+            "complete@10": 0.890625,
+            "turn_recall@10": 0.890625,
+            "tokens@10": 24481.21875,
+            "mrr": 0.6578849969474969,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.8272965879265092,
+            "complete@5": 0.7007874015748031,
+            "turn_recall@5": 0.8225721784776903,
+            "tokens@5": 13716.614173228347,
+            "session_recall@10": 0.9035433070866141,
+            "complete@10": 0.84251968503937,
+            "turn_recall@10": 0.8874015748031495,
+            "tokens@10": 26204.314960629923,
+            "mrr": 0.8115594297120906,
+            "n": 127
+          }
+        }
+      },
+      "hybrid": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.9223758865248226,
+          "complete@5": 0.8595744680851064,
+          "turn_recall@5": 0.9243617021276596,
+          "tokens@5": 14735.9,
+          "session_recall@10": 0.9644326241134752,
+          "complete@10": 0.9319148936170213,
+          "turn_recall@10": 0.9636170212765957,
+          "tokens@10": 28548.989361702126,
+          "mrr": 0.9032597863129777,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.9722222222222222,
+            "complete@5": 0.9444444444444444,
+            "turn_recall@5": 0.9722222222222222,
+            "tokens@5": 15019.625,
+            "session_recall@10": 0.9861111111111112,
+            "complete@10": 0.9722222222222222,
+            "turn_recall@10": 0.9861111111111112,
+            "tokens@10": 28936.291666666668,
+            "mrr": 0.9513888888888888,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.8951790633608815,
+            "complete@5": 0.7768595041322314,
+            "turn_recall@5": 0.9012396694214877,
+            "tokens@5": 14956.96694214876,
+            "session_recall@10": 0.953030303030303,
+            "complete@10": 0.8760330578512396,
+            "turn_recall@10": 0.9567493112947658,
+            "tokens@10": 28959.578512396693,
+            "mrr": 0.9380791384923616,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.9821428571428571,
+            "complete@5": 0.9821428571428571,
+            "turn_recall@5": 0.9821428571428571,
+            "tokens@5": 12451.32142857143,
+            "session_recall@10": 0.9821428571428571,
+            "complete@10": 0.9821428571428571,
+            "turn_recall@10": 0.9821428571428571,
+            "tokens@10": 25987.39285714286,
+            "mrr": 0.9833333333333333,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.9,
+            "complete@5": 0.9,
+            "turn_recall@5": 0.9,
+            "tokens@5": 16706.366666666665,
+            "session_recall@10": 0.9666666666666667,
+            "complete@10": 0.9666666666666667,
+            "turn_recall@10": 0.9666666666666667,
+            "tokens@10": 31738.7,
+            "mrr": 0.7174444444444444,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.984375,
+            "complete@5": 0.984375,
+            "turn_recall@5": 0.984375,
+            "tokens@5": 14190.390625,
+            "session_recall@10": 0.984375,
+            "complete@10": 0.984375,
+            "turn_recall@10": 0.984375,
+            "tokens@10": 27410.375,
+            "mrr": 0.8800223214285714,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.8677165354330708,
+            "complete@5": 0.7637795275590551,
+            "turn_recall@5": 0.8692913385826772,
+            "tokens@5": 15181.236220472441,
+            "session_recall@10": 0.9446194225721785,
+            "complete@10": 0.905511811023622,
+            "turn_recall@10": 0.9380577427821521,
+            "tokens@10": 28888.062992125986,
+            "mrr": 0.8630952380952381,
+            "n": 127
+          }
+        }
+      },
+      "vector_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.500709219858156,
+          "complete@5": 0.28085106382978725,
+          "turn_recall@5": 0.509113475177305,
+          "tokens@5": 12834.48085106383,
+          "session_recall@10": 0.7227304964539006,
+          "complete@10": 0.5361702127659574,
+          "turn_recall@10": 0.7260283687943263,
+          "tokens@10": 25104.91063829787,
+          "mrr": 0.517656438933561,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.4791666666666667,
+            "complete@5": 0.09722222222222222,
+            "turn_recall@5": 0.4861111111111111,
+            "tokens@5": 12689.597222222223,
+            "session_recall@10": 0.6805555555555556,
+            "complete@10": 0.4027777777777778,
+            "turn_recall@10": 0.6944444444444444,
+            "tokens@10": 24847.152777777777,
+            "mrr": 0.5976273148148148,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.4732782369146005,
+            "complete@5": 0.14049586776859505,
+            "turn_recall@5": 0.4742424242424243,
+            "tokens@5": 13261.099173553719,
+            "session_recall@10": 0.7017906336088154,
+            "complete@10": 0.39669421487603307,
+            "turn_recall@10": 0.7,
+            "tokens@10": 25633.98347107438,
+            "mrr": 0.5890165538561261,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.5714285714285714,
+            "complete@5": 0.5714285714285714,
+            "turn_recall@5": 0.5714285714285714,
+            "tokens@5": 11251.535714285714,
+            "session_recall@10": 0.7857142857142857,
+            "complete@10": 0.7857142857142857,
+            "turn_recall@10": 0.7857142857142857,
+            "tokens@10": 23191.625,
+            "mrr": 0.3886630812970098,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.6,
+            "complete@5": 0.6,
+            "turn_recall@5": 0.6,
+            "tokens@5": 15032.3,
+            "session_recall@10": 0.8,
+            "complete@10": 0.8,
+            "turn_recall@10": 0.8,
+            "tokens@10": 28443.0,
+            "mrr": 0.35898880359406676,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.4375,
+            "complete@5": 0.4375,
+            "turn_recall@5": 0.4375,
+            "tokens@5": 12155.4375,
+            "session_recall@10": 0.75,
+            "complete@10": 0.75,
+            "turn_recall@10": 0.75,
+            "tokens@10": 24346.703125,
+            "mrr": 0.3333425396689663,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.5162729658792651,
+            "complete@5": 0.23622047244094488,
+            "turn_recall@5": 0.5425196850393701,
+            "tokens@5": 13031.173228346457,
+            "session_recall@10": 0.7068241469816273,
+            "complete@10": 0.4645669291338583,
+            "turn_recall@10": 0.7128608923884514,
+            "tokens@10": 25184.181102362203,
+            "mrr": 0.5915719481594277,
+            "n": 127
+          }
+        }
+      },
+      "hybrid_time": {
+        "n": 470,
+        "n_abstention": 30,
+        "by_metric": {
+          "session_recall@5": 0.8436524822695035,
+          "complete@5": 0.7148936170212766,
+          "turn_recall@5": 0.8508510638297871,
+          "tokens@5": 14518.812765957447,
+          "session_recall@10": 0.9542553191489361,
+          "complete@10": 0.9085106382978724,
+          "turn_recall@10": 0.9572340425531914,
+          "tokens@10": 28010.963829787233,
+          "mrr": 0.7478978232169721,
+          "n": 470
+        },
+        "by_qtype": {
+          "knowledge-update": {
+            "session_recall@5": 0.8680555555555556,
+            "complete@5": 0.7361111111111112,
+            "turn_recall@5": 0.8680555555555556,
+            "tokens@5": 14705.583333333334,
+            "session_recall@10": 0.9722222222222222,
+            "complete@10": 0.9444444444444444,
+            "turn_recall@10": 0.9722222222222222,
+            "tokens@10": 28279.027777777777,
+            "mrr": 0.8488425925925926,
+            "n": 72
+          },
+          "multi-session": {
+            "session_recall@5": 0.7932506887052342,
+            "complete@5": 0.5619834710743802,
+            "turn_recall@5": 0.7950413223140494,
+            "tokens@5": 14896.520661157025,
+            "session_recall@10": 0.9254820936639119,
+            "complete@10": 0.8347107438016529,
+            "turn_recall@10": 0.9294765840220386,
+            "tokens@10": 28574.88429752066,
+            "mrr": 0.8101731601731602,
+            "n": 121
+          },
+          "single-session-assistant": {
+            "session_recall@5": 0.9821428571428571,
+            "complete@5": 0.9821428571428571,
+            "turn_recall@5": 0.9821428571428571,
+            "tokens@5": 12340.107142857143,
+            "session_recall@10": 1.0,
+            "complete@10": 1.0,
+            "turn_recall@10": 1.0,
+            "tokens@10": 25462.089285714286,
+            "mrr": 0.6729166666666667,
+            "n": 56
+          },
+          "single-session-preference": {
+            "session_recall@5": 0.8,
+            "complete@5": 0.8,
+            "turn_recall@5": 0.8,
+            "tokens@5": 16515.966666666667,
+            "session_recall@10": 0.9333333333333333,
+            "complete@10": 0.9333333333333333,
+            "turn_recall@10": 0.9333333333333333,
+            "tokens@10": 30949.433333333334,
+            "mrr": 0.504021164021164,
+            "n": 30
+          },
+          "single-session-user": {
+            "session_recall@5": 0.90625,
+            "complete@5": 0.90625,
+            "turn_recall@5": 0.90625,
+            "tokens@5": 13951.34375,
+            "session_recall@10": 0.984375,
+            "complete@10": 0.984375,
+            "turn_recall@10": 0.984375,
+            "tokens@10": 26834.46875,
+            "mrr": 0.6016927083333333,
+            "n": 64
+          },
+          "temporal-reasoning": {
+            "session_recall@5": 0.7955380577427822,
+            "complete@5": 0.6141732283464567,
+            "turn_recall@5": 0.8204724409448818,
+            "tokens@5": 14827.952755905511,
+            "session_recall@10": 0.9410761154855642,
+            "complete@10": 0.8740157480314961,
+            "turn_recall@10": 0.9482939632545933,
+            "tokens@10": 28344.377952755905,
+            "mrr": 0.7956854824965062,
+            "n": 127
+          }
+        }
+      }
+    }
+  }
+}

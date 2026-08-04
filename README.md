@@ -10,7 +10,11 @@ actually hard?
 
 The short answer, on the hardware below: **the budget is comfortable, and almost
 all of it goes to the vector scan — but the fix is eight threads, not a vector
-database.**
+database.** And on the follow-up question — does fast retrieval find the *right*
+memories? — the quality eval below says: hybrid lexical+dense gets you to ~0.88
+evidence-complete@10 on LongMemEval-S, naive recency weighting is actively
+destructive, and the real losses are multi-session assembly and multi-hop
+reasoning, not similarity search.
 
 ## The claims under test
 
@@ -146,6 +150,70 @@ n=600,000, embedder `coreml-reference-ane`, seq_len=64.
 
 End-to-end p99 is **15.84 ms**, within the 50 ms budget.
 
+### Retrieval quality — longmemeval_s
+
+LongMemEval-S: 500 questions, ~50-session haystacks (~115k tokens each). 500 instances, 30 abstention (excluded from means). Encoder: MiniLM-L6, the same model as the perf benchmarks.
+
+| chunking | arm | sess_r@10 | complete@10 | turn_r@10 | MRR | tokens@10 |
+|---|---|--:|--:|--:|--:|--:|
+| turn | `bm25` | 0.905 | 0.830 | 0.754 | 0.894 | 2,240 |
+| turn | `vector` | 0.909 | 0.832 | 0.734 | 0.903 | 2,153 |
+| turn | `hybrid` | 0.945 | 0.881 | 0.813 | 0.921 | 2,359 |
+| turn | `vector_time` | 0.513 | 0.300 | 0.387 | 0.439 | 2,085 |
+| turn | `hybrid_time` | 0.916 | 0.834 | 0.785 | 0.836 | 2,333 |
+| window | `bm25` | 0.897 | 0.809 | 0.841 | 0.885 | 10,307 |
+| window | `vector` | 0.931 | 0.868 | 0.849 | 0.900 | 9,877 |
+| window | `hybrid` | 0.946 | 0.887 | 0.888 | 0.920 | 10,270 |
+| window | `vector_time` | 0.522 | 0.302 | 0.466 | 0.446 | 9,497 |
+| window | `hybrid_time` | 0.914 | 0.823 | 0.857 | 0.763 | 10,234 |
+| session | `bm25` | 0.949 | 0.902 | 0.953 | 0.902 | 28,536 |
+| session | `vector` | 0.928 | 0.883 | 0.924 | 0.834 | 26,009 |
+| session | `hybrid` | 0.964 | 0.932 | 0.964 | 0.903 | 28,549 |
+| session | `vector_time` | 0.723 | 0.536 | 0.726 | 0.518 | 25,105 |
+| session | `hybrid_time` | 0.954 | 0.909 | 0.957 | 0.748 | 28,011 |
+
+**complete@10 by question type** (chunking: `session`)
+
+| arm | knowledge-update | multi-session | single-session-assistant | single-session-preference | single-session-user | temporal-reasoning |
+|---|--:|--:|--:|--:|--:|--:|
+| `bm25` | 0.986 | 0.818 | 1.000 | 0.867 | 1.000 | 0.850 |
+| `vector` | 0.875 | 0.860 | 0.982 | 0.967 | 0.891 | 0.843 |
+| `hybrid` | 0.972 | 0.876 | 0.982 | 0.967 | 0.984 | 0.906 |
+| `vector_time` | 0.403 | 0.397 | 0.786 | 0.800 | 0.750 | 0.465 |
+| `hybrid_time` | 0.944 | 0.835 | 1.000 | 0.933 | 0.984 | 0.874 |
+
+### Retrieval quality — locomo
+
+LoCoMo: 10 long conversations, ~2k questions with per-turn evidence labels. 1986 instances, 455 abstention (excluded from means). Encoder: MiniLM-L6, the same model as the perf benchmarks.
+
+| chunking | arm | sess_r@10 | complete@10 | turn_r@10 | MRR | tokens@10 |
+|---|---|--:|--:|--:|--:|--:|
+| turn | `bm25` | 0.821 | 0.759 | 0.512 | 0.664 | 319 |
+| turn | `vector` | 0.746 | 0.690 | 0.455 | 0.536 | 271 |
+| turn | `hybrid` | 0.845 | 0.790 | 0.561 | 0.652 | 300 |
+| turn | `vector_time` | 0.345 | 0.310 | 0.207 | 0.175 | 276 |
+| turn | `hybrid_time` | 0.762 | 0.705 | 0.498 | 0.484 | 303 |
+| window | `bm25` | 0.828 | 0.771 | 0.752 | 0.710 | 1,326 |
+| window | `vector` | 0.747 | 0.690 | 0.634 | 0.574 | 1,146 |
+| window | `hybrid` | 0.837 | 0.779 | 0.759 | 0.695 | 1,245 |
+| window | `vector_time` | 0.359 | 0.320 | 0.304 | 0.199 | 1,163 |
+| window | `hybrid_time` | 0.767 | 0.711 | 0.697 | 0.484 | 1,260 |
+| session | `bm25` | 0.886 | 0.826 | 0.887 | 0.721 | 7,224 |
+| session | `vector` | 0.619 | 0.556 | 0.620 | 0.406 | 6,567 |
+| session | `hybrid` | 0.851 | 0.798 | 0.851 | 0.550 | 6,883 |
+| session | `vector_time` | 0.557 | 0.500 | 0.557 | 0.269 | 6,862 |
+| session | `hybrid_time` | 0.774 | 0.715 | 0.775 | 0.436 | 7,023 |
+
+**complete@10 by question type** (chunking: `session`)
+
+| arm | locomo-cat1 | locomo-cat2 | locomo-cat3 | locomo-cat4 |
+|---|--:|--:|--:|--:|
+| `bm25` | 0.413 | 0.887 | 0.551 | 0.970 |
+| `vector` | 0.299 | 0.691 | 0.348 | 0.614 |
+| `hybrid` | 0.470 | 0.878 | 0.506 | 0.908 |
+| `vector_time` | 0.210 | 0.575 | 0.213 | 0.598 |
+| `hybrid_time` | 0.335 | 0.800 | 0.404 | 0.843 |
+
 <!-- /RESULTS -->
 
 > The ANE-residency column is a property of the converted *package*, measured
@@ -240,16 +308,91 @@ only `QOS_CLASS_BACKGROUND` gets E-core confinement. This is one `ctypes` call
 of the budget. Measured because it is usually omitted, and it turns out not to
 matter.
 
-### What this does not measure
+## What the quality numbers say
 
-Retrieval *quality* — whether the returned memories are the right ones — is the
-hard, unsolved part of this problem, and nothing here addresses it. These are
-synthetic vectors with known ground truth, so recall@10 measures whether a
-backend finds the true nearest neighbours, not whether nearest-neighbour
-retrieval surfaces what a user actually meant. Milestone 2 (compression) is
-likewise unmeasured: it belongs at write time and idle time, never in the query
-path, where a single summarisation call would cost 500ms-5s and blow this entire
-budget a hundred times over.
+The perf section above answers "how fast"; `bench/quality/` answers whether
+retrieval finds the *labelled evidence* on LongMemEval-S and LoCoMo. Scores are
+evidence recall, and the strictest column — complete@10, all evidence sessions
+present in the top 10 chunks — is the one quoted below unless stated otherwise.
+
+**Hybrid lexical+dense fusion wins wherever both parents are healthy — and
+quietly poisons the ranking where one is not.** Parameter-free RRF over BM25
+and MiniLM ranks beats both parents at every chunking on LongMemEval-S
+(0.881 / 0.887 / 0.932 for turn / window / session, vs 0.830-0.902 for the
+best single retriever) and at turn granularity on LoCoMo (0.790 vs 0.759).
+But the fine print matters: on LoCoMo at session granularity — where the dense
+parent is crippled by truncation (below) — fusion drags BM25 *down* (0.798 vs
+0.826 at k=10), BM25 beats hybrid on MRR at every chunking, and at complete@5
+the gap is 17 points (0.746 vs 0.575). Fusion's wins live at k=10; a broken
+parent poisons the early ranks first. The design rule is therefore not "always
+fuse" but *fuse healthy parents, and validate each parent separately at small
+k before shipping the fusion*.
+
+**Dense-only retrieval is never the best arm — but where the encoder wins or
+loses is about chunk shape, not a constant.** Across all six operating points
+(two datasets × three chunkings), plain MiniLM vectors never take first place:
+hybrid wins five, BM25 alone wins the sixth. The per-chunking story has real
+texture: vectors beat BM25 outright at window granularity on LongMemEval-S
+(0.868 vs 0.809), tie it at turn level, and collapse against it on LoCoMo
+sessions (0.556 vs 0.826). That collapse is structural, not a tuning issue:
+the encoder embeds only the first 256 tokens of a long session while BM25 sees
+all of it. Small-encoder dense retrieval wants small chunks; lexical retrieval
+tolerates any size. Whether a stronger encoder changes this is a question the
+harness can now answer cheaply (`--model` sweep is future work).
+
+**Un-gated recency fusion is a catastrophe, including on the questions it was
+meant to help.** Giving recency an equal RRF vote (`vector_time`) drops
+complete@10 from 0.832 to 0.300 overall — and on *knowledge-update* questions,
+the type recency intuitively targets, from **0.972 to 0.097**. The mechanism is
+visible in the labels: knowledge-update questions average exactly 2.0 evidence
+sessions (the stale fact and its update), and a "newest first" vote floods the
+top-10 with recent-but-irrelevant chunks while burying the older half of the
+evidence pair. Diluting recency to 1/3 of the vote (`hybrid_time`) does not
+rescue it: it never beats plain `hybrid` on any overall metric, and it loses to
+*plain BM25* on complete@5 (0.606-0.715 vs 0.721-0.834) and MRR at every
+chunking — a third of a vote for recency still wrecks the early ranks. The
+design conclusion is sharp: temporal signals must be *gated by the query*
+(detect that a question is temporal, then apply time logic), never fused
+unconditionally. This contradicts the intuitive advice — "add recency
+weighting" — that this project started with; measured, it subtracts.
+
+**Multi-session assembly and temporal reasoning are the open problems.**
+Single-session questions are essentially solved by hybrid retrieval at turn or
+session granularity (0.97-1.00; window granularity dips to 0.90 on the small
+n=30 preference slice). The hard types, at the efficient operating point
+(hybrid, turn chunks): multi-session 0.785, temporal-reasoning 0.787.
+Session-sized chunks push those to 0.876 / 0.906 — by spending 12x the tokens
+(28.5k vs 2.4k per query at k=10). And the hardest slice in either benchmark
+is LoCoMo's multi-hop category (n=281): the best score *any* arm reaches at
+any chunking is **0.470**. Assembling evidence *sets* and reasoning about
+time, not similarity search per se, is where memory-retrieval quality is
+actually lost.
+
+**Chunk granularity is a recall-vs-context-budget dial, and turn chunks are the
+efficient point.** On LongMemEval-S, hybrid at turn granularity reaches 0.881
+complete@10 within ~2.4k retrieved tokens; session granularity buys +5 points
+for 12x the context. A memory system that hands its LLM 28k tokens per query
+has reinvented the long-context problem retrieval was meant to solve. Turn or
+window chunks at k=10, hybrid ranking, is the sane default.
+
+**LoCoMo is the stress test, not an echo.** Its shape (10 very long two-speaker
+histories, per-turn evidence, 455 of 1,986 questions adversarial and excluded)
+is what surfaced both of the caveats above: the broken-parent fusion failure at
+session granularity, and the 0.470 ceiling on multi-hop questions. Its
+noise-level window result (hybrid 0.779 vs BM25 0.771) is also a reminder that
+not every tabled difference is a finding.
+
+### What this still does not measure
+
+Answer accuracy (whether an LLM given the retrieved chunks answers correctly) —
+evidence recall is the retrieval system's own scoreboard, deliberately isolated
+from the downstream model. Stronger encoders, query rewriting, and gated
+temporal logic are the obvious next arms; the harness embeds ~250k chunks once
+into a content-addressed cache, so each additional arm costs seconds, not
+hours. Milestone 2 (compression/consolidation) remains unmeasured: it belongs
+at write time and idle time, never in the query path, where a single
+summarisation call would cost 500ms-5s and blow the entire latency budget a
+hundred times over.
 
 ## What the harness measures
 
