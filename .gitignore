@@ -1,0 +1,20 @@
+# Generated corpora -- ~10 GB at the default scales, and fully reproducible
+# from a seed via bench/corpus.py. Never commit these.
+data/
+
+# Converted CoreML packages (~43 MB) and compiled .mlmodelc caches.
+# Regenerate with scripts/convert_coreml.py.
+models/
+
+# Benchmark output is machine-specific; commit deliberately, not by default.
+results/
+
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
