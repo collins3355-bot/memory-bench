@@ -13,10 +13,11 @@ all of it goes to the vector scan — but the fix is eight threads, not a vector
 database.** And on the follow-up question — does fast retrieval find the *right*
 memories? — the quality eval below says: a retrieval-trained encoder over small
 chunks reaches 0.91 evidence-complete@10 on LongMemEval-S, retrieving *wider*
-(k=50 over turn-sized chunks) solves even multi-session assembly at 0.98, naive
-recency weighting is actively destructive with every encoder tested, and the
-open problem is squeezing wide retrieval back into a small context — reranking —
-not similarity search.
+(k=50 over turn-sized chunks) solves even multi-session assembly at 0.98, a
+22M-parameter cross-encoder rerank compresses that wide net back to 0.93
+complete@10 in a ~2.3k-token context, and naive recency weighting is actively
+destructive with every encoder tested. What survives as genuinely open:
+multi-hop questions, and running the reranker inside the latency budget.
 
 ## The claims under test
 
@@ -230,6 +231,21 @@ complete@k for the `hybrid` arm on longmemeval_s, overall and for the hardest ty
 | session | overall | 0.860 | 0.932 | 0.981 | 1.000 | 109,649 |
 | session | multi-session | 0.777 | 0.876 | 0.959 | 1.000 | 109,926 |
 
+### Cross-encoder rerank — compressing k=50 into k=5-10
+
+First stage retrieves 50 turn chunks; `ms-marco-MiniLM-L6` reranks them. `ceiling` is the base arm's complete@50 — the recall available to the reranker. Δ@5 is reranked minus base at complete@5.
+
+| dataset / encoder | base arm | c@5 → +ce | Δ@5 | c@10 → +ce | ceiling | tok@10 → +ce |
+|---|---|--:|--:|--:|--:|--:|
+| LongMemEval-S / MiniLM | `vector` | 0.681 → **0.817** | +0.136 | 0.832 → **0.913** | 0.972 | 2,153 → 2,203 |
+| LongMemEval-S / MiniLM | `hybrid` | 0.774 → **0.828** | +0.053 | 0.881 → **0.921** | 0.981 | 2,359 → 2,250 |
+| LongMemEval-S / e5-small | `vector` | 0.802 → **0.836** | +0.034 | 0.906 → **0.923** | 0.985 | 1,963 → 2,091 |
+| LongMemEval-S / e5-small | `hybrid` | 0.815 → **0.830** | +0.015 | 0.898 → **0.928** | 0.991 | 2,222 → 2,200 |
+| LoCoMo / MiniLM | `vector` | 0.572 → **0.722** | +0.151 | 0.690 → **0.782** | 0.927 | 271 → 317 |
+| LoCoMo / MiniLM | `hybrid` | 0.681 → **0.775** | +0.095 | 0.790 → **0.839** | 0.952 | 300 → 344 |
+| LoCoMo / e5-small | `vector` | 0.745 → **0.784** | +0.039 | 0.817 → **0.848** | 0.975 | 387 → 381 |
+| LoCoMo / e5-small | `hybrid` | 0.748 → **0.788** | +0.040 | 0.828 → **0.849** | 0.964 | 372 → 381 |
+
 ### Encoder sweep — longmemeval_s
 
 Same grid, dense encoder swapped: MiniLM-L6 (22.7M, mean-pool) vs e5-small-v2 (33M, 12 layers, asymmetric query/passage prefixes). complete@10; Δ is e5 minus MiniLM.
@@ -366,12 +382,13 @@ dense-only at k=10), and the truncation-crippled dense parent drags BM25 down
 on LoCoMo sessions (0.798 vs 0.826 at k=10; a 17-point gap at complete@5) —
 though not reliably: on LoCoMo turn chunks e5 outguns BM25 by a similar margin
 and fusion still helps (0.828). What *is* consistent is the k-dependence: by
-k=20, hybrid beats both parents at every operating point in the grid,
-including over the broken parent (LoCoMo session: 0.942 vs BM25's 0.931) and
-over the dominant one (e5 turn: 0.955 vs 0.949, extending to 0.991 vs 0.985 at
-k=50). Practical rule: *at small k, fusion needs validating against the
-stronger parent; at k≥20 it is safe to fuse everything measured here — except
-recency, below.*
+k=20, hybrid beats both parents at every operating point in the grid but one
+(on LoCoMo turn chunks with e5, dense-only stays ahead by a noise-level
+0.003), including over the broken parent (LoCoMo session: 0.942 vs BM25's
+0.931) and over the dominant one on LongMemEval-S (e5 turn: 0.955 vs 0.949,
+extending to 0.991 vs 0.985 at k=50). Practical rule: *at small k, fusion
+needs validating against the stronger parent; at k≥20 it is close to safe to
+fuse everything measured here — except recency, below.*
 
 **"Dense-only never wins" was mostly an artifact of the weak encoder — but the
 chunk-shape constraint is not.** With MiniLM, vectors took first place at
@@ -429,6 +446,43 @@ is the precision stage — reranking ~50 wide-net candidates down to a small
 context — plus query-gated time logic.** That is where a memory engine gets to
 differentiate.
 
+**A tiny cross-encoder converts wide-net recall into small-context precision.**
+Reranking the top-50 turn chunks with `ms-marco-MiniLM-L6` (22.7M params, the
+same size class as the retrievers) improves every overall metric in all eight
+configurations measured (vector and hybrid bases × two encoders × two
+datasets; BM25 bases and coarser chunkings were not given a reranker). On
+LongMemEval-S with the MiniLM first stage: complete@5 goes 0.774 → 0.828
+within ~1k retrieved tokens, and complete@10 goes 0.881 → 0.921 within ~2.3k —
+recovering ~40% of the gap between the base ranking and the 0.981 ceiling the
+wide net makes available. With e5, hybrid+ce50 posts the best LongMemEval-S
+number on the board, **0.928 complete@10** (on LoCoMo, vector+ce50 is the
+better e5 arm past k=10). The largest wins are where first-stage ranking was
+weakest — LoCoMo MRR jumps 0.652 → 0.806 — and knowledge-update closes from
+0.972 to a clean **1.000 complete@10 with both encoders** (plain retrieval had
+already recovered the update/stale-fact pairs recency fusion buried; the CE
+finishes the last two questions). "Improves every overall metric" is not
+"free", though: two question types consistently regress — LoCoMo's
+open-domain cat3 (0.573 → 0.528 with e5, same direction in all four cells)
+and single-session-preference MRR — so a shipped reranker wants per-type
+evaluation, not just the aggregate.
+
+**The reranker nearly erases the encoder gap — which changes what to ship.**
+MiniLM+ce50 beats *plain e5* on both datasets (0.921 vs 0.898 on
+LongMemEval-S; 0.839 vs 0.828 on LoCoMo), and trails e5+ce50 by under a point.
+The +7.4-point encoder upgrade the sweep celebrated shrinks to +0.6 once both
+sides get a reranker. Engine implication: if you ship a rerank stage, the
+first-stage encoder barely matters — and MiniLM is the encoder with the
+validated 0.9ms ANE path. Spend the model budget on the reranker, not the
+retriever. Two costs temper the whole rerank story. Multi-hop is *not* a
+ranking problem: LoCoMo cat1 improves (0.377 → 0.473 at k=10 with MiniLM) but
+stays the worst number on the board — those questions need query
+decomposition, not better scoring. And the latency bill is real: a batch of
+50 pairs costs 54.5ms in eager PyTorch on CPU — alone exceeding the 50ms
+budget — or 17.6ms on MPS. The reranker is a 6-layer BERT, the exact
+architecture class this repo already converts to the Neural Engine at ~7-13x
+eager-CPU speed at these sequence lengths, so CE-on-ANE is the obvious next
+perf milestone rather than an open question.
+
 **LoCoMo is the stress test, not an echo.** Its shape (10 very long two-speaker
 histories, per-turn evidence, 455 of 1,986 questions adversarial and excluded)
 is what surfaced the broken-parent fusion failure at session granularity and
@@ -441,10 +495,11 @@ difference is a finding.
 
 Answer accuracy (whether an LLM given the retrieved chunks answers correctly) —
 evidence recall is the retrieval system's own scoreboard, deliberately isolated
-from the downstream model. The obvious next arms are the ones the k-sweep
-points at: a reranking stage (cross-encoder or LLM) squeezing k=50 candidates
-into a small context, query-gated time logic, and query rewriting; the harness
-embeds ~300k chunks once into a content-addressed cache, so each additional arm
+from the downstream model. The remaining arms the results point at: query
+decomposition for multi-hop (the one question type reranking cannot fix),
+query-gated time logic, and the cross-encoder's CoreML/ANE conversion so the
+rerank stage fits the latency budget; the harness embeds ~300k chunks and
+caches ~200k reranker pair scores by content hash, so each additional arm
 costs seconds, not hours. Milestone 2 (compression/consolidation) remains
 unmeasured: it belongs
 at write time and idle time, never in the query path, where a single

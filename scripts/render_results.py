@@ -273,6 +273,19 @@ def main() -> int:
     lme = _load("quality_longmemeval_s")
     if lme:
         parts += ksweep_section(lme)
+
+    rerank_files = {}
+    for label, name in (
+        ("LongMemEval-S / MiniLM", "quality_rerank_longmemeval_s"),
+        ("LongMemEval-S / e5-small", "quality_rerank_longmemeval_s_e5-small"),
+        ("LoCoMo / MiniLM", "quality_rerank_locomo"),
+        ("LoCoMo / e5-small", "quality_rerank_locomo_e5-small"),
+    ):
+        d = _load(name)
+        if d:
+            rerank_files[label] = d
+    if rerank_files:
+        parts += rerank_section(rerank_files)
     for dataset in ("longmemeval_s", "locomo"):
         base, e5 = _load(f"quality_{dataset}"), _load(f"quality_{dataset}_e5-small")
         if base and e5:
