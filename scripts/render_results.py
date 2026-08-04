@@ -110,6 +110,59 @@ def pipeline_section(d: dict) -> list[str]:
     return out
 
 
+QUALITY_DATASET_NOTES = {
+    "longmemeval_s": "LongMemEval-S: 500 questions, ~50-session haystacks (~115k tokens each)",
+    "locomo": "LoCoMo: 10 long conversations, ~2k questions with per-turn evidence labels",
+}
+
+
+def quality_section(d: dict, dataset: str) -> list[str]:
+    note = QUALITY_DATASET_NOTES.get(dataset, dataset)
+    out = [
+        f"### Retrieval quality — {dataset}",
+        "",
+        f"{note}. {d['n_instances']} instances, {d['n_abstention']} abstention "
+        "(excluded from means). Encoder: MiniLM-L6, the same model as the perf "
+        "benchmarks.",
+        "",
+        "| chunking | arm | sess_r@10 | complete@10 | turn_r@10 | MRR | tokens@10 |",
+        "|---|---|--:|--:|--:|--:|--:|",
+    ]
+    for chunking, arms in d["results"].items():
+        for arm, agg in arms.items():
+            m = agg["by_metric"]
+            out.append(
+                f"| {chunking} | `{arm}` | {m['session_recall@10']:.3f} | "
+                f"{m['complete@10']:.3f} | {m['turn_recall@10']:.3f} | "
+                f"{m['mrr']:.3f} | {m['tokens@10']:,.0f} |"
+            )
+    out.append("")
+
+    # Per-question-type breakdown at one operating point per dataset: the
+    # chunking whose best arm has the highest complete@10.
+    best_chunking, best_score = None, -1.0
+    for chunking, arms in d["results"].items():
+        top = max(a["by_metric"]["complete@10"] for a in arms.values())
+        if top > best_score:
+            best_chunking, best_score = chunking, top
+    arms = d["results"][best_chunking]
+    qtypes = sorted(next(iter(arms.values()))["by_qtype"])
+    out += [
+        f"**complete@10 by question type** (chunking: `{best_chunking}`)",
+        "",
+        "| arm | " + " | ".join(qtypes) + " |",
+        "|---|" + "--:|" * len(qtypes),
+    ]
+    for arm, agg in arms.items():
+        cells = " | ".join(
+            f"{agg['by_qtype'][qt]['complete@10']:.3f}" if qt in agg["by_qtype"] else "—"
+            for qt in qtypes
+        )
+        out.append(f"| `{arm}` | {cells} |")
+    out.append("")
+    return out
+
+
 def main() -> int:
     parts: list[str] = [MARKER, ""]
     for name, fn in (
@@ -123,6 +176,13 @@ def main() -> int:
             parts += fn(d)
         else:
             print(f"[skip] results/{name}.json not found")
+
+    for dataset in ("longmemeval_s", "locomo"):
+        d = _load(f"quality_{dataset}")
+        if d:
+            parts += quality_section(d, dataset)
+        else:
+            print(f"[skip] results/quality_{dataset}.json not found")
     parts.append(END)
 
     text = README.read_text()

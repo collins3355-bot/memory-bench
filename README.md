@@ -259,6 +259,28 @@ budget a hundred times over.
 | `embed` | PyTorch CPU/MPS vs CoreML CPU/GPU/ANE, with real ANE residency |
 | `contention` | Does background indexing make foreground queries slow? |
 | `pipeline` | Full budget: tokenise → embed → search → hydrate text |
+| `quality` | Does retrieval surface the *right* memories? (separate module, below) |
+
+### Retrieval quality (`bench/quality/`)
+
+The perf harness answers "how fast"; this answers the harder question it
+deliberately left open — whether nearest-neighbour retrieval finds the labelled
+evidence on real assistant-memory benchmarks:
+
+* **LongMemEval** (cleaned) — 500 questions over ~115k-token multi-session chat
+  histories, evidence labelled at session *and turn* level, with question types
+  that map to memory-system failure modes (multi-session assembly, temporal
+  reasoning, knowledge updates, abstention).
+* **LoCoMo** — ~2k questions over 10 very long two-speaker conversations with
+  per-dialog-turn evidence.
+
+Experimental grid: chunking (turn / 4-turn window / session) × retrieval arm
+(BM25 / dense MiniLM vectors / RRF hybrid / recency-fused variants). Fusion is
+reciprocal-rank throughout because RRF is parameter-free — with only 500 eval
+questions, any tuned mixing weight or decay rate would be fitted to the test
+set. Scored on evidence recall (session and turn), completeness (all evidence
+present — the bar that matters for multi-session questions), MRR, and tokens
+retrieved at k (the context-window cost the arm imposes downstream).
 
 Two encoder implementations are compared, both loading the same MiniLM weights
 and verified against HuggingFace to float32 roundoff (1e-7):
@@ -291,12 +313,28 @@ Individual runs, if you want to skip the 6M scale:
 .venv/bin/python -m bench.cli search --scales 60000 600000 --iters 60
 ```
 
+The quality eval fetches its datasets (LongMemEval-cleaned ~293 MB, LoCoMo
+~3 MB) and then runs the full grid; embeddings are cached by content hash, so
+only the first run pays the encoding cost:
+
+```bash
+.venv/bin/python scripts/fetch_quality_data.py
+.venv/bin/python -m bench.quality.run --dataset longmemeval_s
+.venv/bin/python -m bench.quality.run --dataset locomo
+```
+
+Tests (each one is a regression guard for a bug that actually happened):
+
+```bash
+.venv/bin/python tests/test_quality.py
+```
+
 Results land in `results/*.json`, each tagged with the machine fingerprint. A
 latency number without its hardware is not a result.
 
 ## Methodology notes
 
-Benchmarks mostly lie by accident. Four bugs found while building this one, all
+Benchmarks mostly lie by accident. Six bugs found while building this one, all
 of which produced *plausible* numbers, are documented in the source where they
 occurred:
 
@@ -323,6 +361,22 @@ output revealed it. Now asserted in `bench/cli.py`.
 int16 saturates at 32767. Every score clipped, ranking correlating **−0.32**
 with truth — and the search still returned plausible ids at plausible speed,
 with recall quietly at 0.02.
+
+**Tie blocks turn rank fusion into index-position bias.** Plain `argsort` ranks
+give tied scores index-order positions, and in RRF those arbitrary positions
+become real score differences. This is not a corner case: most chunks share no
+term with a given query, so the majority of the BM25 list is one tie block at
+0.0 — and chunks early in the haystack systematically outranked identical-scored
+later ones in every fused arm. Caught by a unit test in which a fresher chunk
+with an identical content score lost to a staler one. Fix: tied items share
+their mean rank (`bench/quality/retrieve.py`), verified by a corpus-order-
+invariance test.
+
+**`inf − inf` is NaN, which un-ties the one block that must stay tied.** Tie
+boundaries detected via `np.diff` break on the all-`inf` age block that undated
+chunks form, silently reintroducing the same index bias for exactly the chunks
+a recency vote must not discriminate among. Boundaries are detected by equality
+instead.
 
 The measurement primitives in `bench/timing.py` discard warmup iterations,
 report p50/p90/p99 rather than a mean, and record the empirical timer floor.
