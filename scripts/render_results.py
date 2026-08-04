@@ -163,6 +163,58 @@ def quality_section(d: dict, dataset: str) -> list[str]:
     return out
 
 
+def ksweep_section(d: dict) -> list[str]:
+    """complete@k growth for the hybrid arm -- is k the lever for hard questions?"""
+    ks = d.get("ks", [5, 10])
+    if len(ks) < 3:
+        return []
+    out = [
+        "### Does retrieving more fix the hard questions? (k-sweep)",
+        "",
+        f"complete@k for the `hybrid` arm on longmemeval_s, overall and for the "
+        "hardest type (multi-session), as k grows.",
+        "",
+        "| chunking | slice | " + " | ".join(f"c@{k}" for k in ks) + " | tokens@" + str(ks[-1]) + " |",
+        "|---|---|" + "--:|" * (len(ks) + 1),
+    ]
+    for chunking, arms in d["results"].items():
+        agg = arms.get("hybrid")
+        if not agg:
+            continue
+        m = agg["by_metric"]
+        cells = " | ".join(f"{m[f'complete@{k}']:.3f}" for k in ks)
+        out.append(f"| {chunking} | overall | {cells} | {m[f'tokens@{ks[-1]}']:,.0f} |")
+        ms = agg["by_qtype"].get("multi-session")
+        if ms:
+            cells = " | ".join(f"{ms[f'complete@{k}']:.3f}" for k in ks)
+            out.append(f"| {chunking} | multi-session | {cells} | {ms[f'tokens@{ks[-1]}']:,.0f} |")
+    out.append("")
+    return out
+
+
+def encoder_section(base: dict, e5: dict, dataset: str) -> list[str]:
+    """MiniLM vs e5-small, isolated on the arms where the encoder matters."""
+    out = [
+        f"### Encoder sweep — {dataset}",
+        "",
+        "Same grid, dense encoder swapped: MiniLM-L6 (22.7M, mean-pool) vs "
+        "e5-small-v2 (33M, 12 layers, asymmetric query/passage prefixes). "
+        "complete@10; Δ is e5 minus MiniLM.",
+        "",
+        "| chunking | arm | MiniLM | e5-small | Δ |",
+        "|---|---|--:|--:|--:|",
+    ]
+    for chunking in base["results"]:
+        for arm in ("vector", "hybrid"):
+            b = base["results"][chunking][arm]["by_metric"]["complete@10"]
+            e = e5["results"][chunking][arm]["by_metric"]["complete@10"]
+            out.append(
+                f"| {chunking} | `{arm}` | {b:.3f} | {e:.3f} | {e - b:+.3f} |"
+            )
+    out.append("")
+    return out
+
+
 def main() -> int:
     parts: list[str] = [MARKER, ""]
     for name, fn in (
@@ -183,6 +235,16 @@ def main() -> int:
             parts += quality_section(d, dataset)
         else:
             print(f"[skip] results/quality_{dataset}.json not found")
+
+    lme = _load("quality_longmemeval_s")
+    if lme:
+        parts += ksweep_section(lme)
+    for dataset in ("longmemeval_s", "locomo"):
+        base, e5 = _load(f"quality_{dataset}"), _load(f"quality_{dataset}_e5-small")
+        if base and e5:
+            parts += encoder_section(base, e5, dataset)
+        elif not e5:
+            print(f"[skip] results/quality_{dataset}_e5-small.json not found")
     parts.append(END)
 
     text = README.read_text()

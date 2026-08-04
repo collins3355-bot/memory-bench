@@ -81,10 +81,15 @@ def ages_for(chunks: list[CH.Chunk], q_dt: datetime | None) -> np.ndarray:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    from .embedder import MODELS
+
     ap.add_argument("--dataset", default="longmemeval_s",
                     choices=["longmemeval_oracle", "longmemeval_s", "locomo"])
     ap.add_argument("--chunkings", default="turn,window,session")
     ap.add_argument("--arms", default=",".join(ARMS))
+    ap.add_argument("--model", default="minilm", choices=sorted(MODELS))
+    ap.add_argument("--ks", default="5,10,20,50",
+                    help="k values for recall/complete/tokens metrics")
     ap.add_argument("--limit", type=int, default=0, help="cap instances, 0 = all")
     ap.add_argument("--data", default="data/quality")
     ap.add_argument("--device", default=None)
@@ -93,6 +98,7 @@ def main() -> int:
 
     chunkings = [c for c in args.chunkings.split(",") if c]
     arms = [a for a in args.arms.split(",") if a]
+    ks = tuple(int(k) for k in args.ks.split(",") if k)
 
     t0 = time.time()
     instances = D.load(args.dataset, args.data)
@@ -106,9 +112,10 @@ def main() -> int:
         f"{len({i.haystack_key for i in instances})} haystacks, {time.time()-t0:.1f}s"
     )
 
-    embedder = BulkEmbedder(device=args.device)
-    cache = EmbedCache(Path(args.data) / "cache", "minilm-l6")
-    print(f"[embed] device={embedder.device}, cache has {len(cache.index)} texts")
+    embedder = BulkEmbedder(model=args.model, device=args.device)
+    cache = EmbedCache(Path(args.data) / "cache", embedder.spec["slug"])
+    qp, pp = embedder.spec["query_prefix"], embedder.spec["passage_prefix"]
+    print(f"[embed] model={args.model}, device={embedder.device}, cache has {len(cache.index)} texts")
 
     results: dict[str, dict] = {}
     for chunking in chunkings:
@@ -120,12 +127,16 @@ def main() -> int:
         for chunks in haystacks.values():
             stamp_tokens(chunks, embedder.tok)
 
-        # One embedding pass over everything new: chunk texts + questions.
+        # One embedding pass over everything new: chunk texts + questions. The
+        # cache key hashes the *prefixed* string, because that is what gets
+        # embedded -- e5's "query: "/"passage: " prefixes produce different
+        # vectors for the same text, and a key that ignored them would serve
+        # passage vectors where query vectors were meant.
         uid_text: dict[str, str] = {}
         for c in all_chunks:
-            uid_text.setdefault(c.uid, c.text)
+            uid_text.setdefault(_hash_uid(pp + c.text), pp + c.text)
         for inst in instances:
-            uid_text.setdefault(_hash_uid(inst.question), inst.question)
+            uid_text.setdefault(_hash_uid(qp + inst.question), qp + inst.question)
         todo = cache.missing(list(uid_text))
         if todo:
             print(f"  embedding {len(todo)} new texts ({len(uid_text)-len(todo)} cached)")
@@ -134,21 +145,25 @@ def main() -> int:
             cache.save()
 
         bm25_by_key = {key: BM25([c.text for c in chunks]) for key, chunks in haystacks.items()}
-        vec_by_key = {key: cache.gather([c.uid for c in chunks]) for key, chunks in haystacks.items()}
+        vec_by_key = {
+            key: cache.gather([_hash_uid(pp + c.text) for c in chunks])
+            for key, chunks in haystacks.items()
+        }
 
         per_arm_scores: dict[str, list[M.InstanceScore]] = defaultdict(list)
         for inst in scored_instances:
             chunks = haystacks[inst.haystack_key]
-            qvec = cache.gather([_hash_uid(inst.question)])[0]
+            qvec = cache.gather([_hash_uid(qp + inst.question)])[0]
             cos = vec_by_key[inst.haystack_key] @ qvec
             bm = np.asarray(bm25_by_key[inst.haystack_key].scores(inst.question), dtype=np.float64)
             ages = ages_for(chunks, inst.q_dt)
             for arm in arms:
                 ranking = rank_arm(arm, bm, cos, ages)
-                per_arm_scores[arm].append(M.score_ranking(ranking, chunks, inst))
+                per_arm_scores[arm].append(M.score_ranking(ranking, chunks, inst, ks=ks))
 
         results[chunking] = {
-            arm: M.aggregate(scores, n_abst).__dict__ for arm, scores in per_arm_scores.items()
+            arm: M.aggregate(scores, n_abst, ks=ks).__dict__
+            for arm, scores in per_arm_scores.items()
         }
         print(f"  scored {len(scored_instances)} instances x {len(arms)} arms in {time.time()-t1:.1f}s")
 
@@ -161,7 +176,8 @@ def main() -> int:
                 f"{m['turn_recall@10']:9.3f} {m['mrr']:6.3f} {m['tokens@10']:8.0f}"
             )
 
-    out_path = Path(args.out or f"results/quality_{args.dataset}.json")
+    suffix = "" if args.model == "minilm" else f"_{args.model}"
+    out_path = Path(args.out or f"results/quality_{args.dataset}{suffix}.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     from .. import sysinfo
 
@@ -169,6 +185,8 @@ def main() -> int:
         json.dumps(
             {
                 "dataset": args.dataset,
+                "model": args.model,
+                "ks": list(ks),
                 "n_instances": len(instances),
                 "n_abstention": n_abst,
                 "machine": sysinfo.collect(),

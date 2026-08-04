@@ -79,24 +79,60 @@ class EmbedCache:
         return self.vectors[rows]
 
 
+# Encoders the eval can sweep. Only mean-pooling BERT-architecture models fit
+# the shared encoder implementation -- a CLS-pooling model (bge-*) loaded into
+# a mean-pooling graph would silently misrepresent the model, so it is not
+# offered. e5 requires its documented asymmetric prefixes; retrieval quality
+# degrades measurably without them, which would unfairly handicap the model.
+MODELS = {
+    "minilm": {
+        "hf": "sentence-transformers/all-MiniLM-L6-v2",
+        "slug": "minilm-l6",
+        "query_prefix": "",
+        "passage_prefix": "",
+    },
+    "e5-small": {
+        "hf": "intfloat/e5-small-v2",
+        "slug": "e5-small-v2",
+        "query_prefix": "query: ",
+        "passage_prefix": "passage: ",
+    },
+}
+
+
 class BulkEmbedder:
-    def __init__(self, device: str | None = None, max_len: int = 256, batch: int = 128):
+    def __init__(
+        self,
+        model: str = "minilm",
+        device: str | None = None,
+        max_len: int = 256,
+        batch: int = 128,
+    ):
         import torch
 
         from .. import encoder as E
 
+        if model not in MODELS:
+            raise ValueError(f"unknown model {model!r}; options: {sorted(MODELS)}")
+        self.spec = MODELS[model]
+        self.model_key = model
         self.torch = torch
         self.max_len = max_len
         self.batch = batch
         self.device = device or ("mps" if torch.backends.mps.is_available() else "cpu")
-        self.model = E.build("reference").to(self.device).eval()
-        self.tok = E.load_tokenizer()
+        self.model = E.build("reference", self.spec["hf"]).to(self.device).eval()
+        self.dim = self.model.cfg.hidden_size
+        self.tok = E.load_tokenizer(self.spec["hf"])
 
     def encode(self, texts: list[str], progress: bool = True) -> np.ndarray:
-        """Embed `texts` in length-sorted batches; rows align with input order."""
+        """Embed `texts` in length-sorted batches; rows align with input order.
+
+        Texts must arrive already carrying any model prefix -- prefixing is the
+        caller's job because the cache key must hash the exact string embedded.
+        """
         t = self.torch
         order = sorted(range(len(texts)), key=lambda i: len(texts[i]))
-        out = np.zeros((len(texts), 384), dtype=np.float32)
+        out = np.zeros((len(texts), self.dim), dtype=np.float32)
 
         done = 0
         with t.no_grad():
