@@ -125,6 +125,34 @@ def test_ages_fall_back_to_newest_session_without_question_date():
     assert ages[1] == 0.0 and ages[0] == 31.0
 
 
+# ---------------------------------------------------------------- rerank
+
+
+def test_apply_rerank_reorders_head_only():
+    from bench.quality.rerank import apply_rerank
+
+    ranking = np.array([7, 3, 9, 1, 5])
+    scores = np.array([0.1, 0.9, 0.5])  # for ranking[:3] = [7, 3, 9]
+    out = apply_rerank(ranking, 3, scores)
+    assert list(out) == [3, 9, 7, 1, 5]  # head by score desc, tail untouched
+
+
+def test_apply_rerank_depth_clamps():
+    from bench.quality.rerank import apply_rerank
+
+    ranking = np.array([2, 0, 1])
+    out = apply_rerank(ranking, 10, np.array([0.0, 1.0, 0.5]))
+    assert list(out) == [0, 1, 2]
+    assert list(apply_rerank(ranking, 1, np.array([9.0]))) == [2, 0, 1]
+
+
+def test_pair_key_is_boundary_unambiguous():
+    from bench.quality.rerank import pair_key
+
+    assert pair_key("ab", "c") != pair_key("a", "bc")
+    assert pair_key("q", "p") == pair_key("q", "p")
+
+
 def test_window_chunker_covers_short_sessions():
     inst = Instance(
         "q", "t", "?", None, "a",

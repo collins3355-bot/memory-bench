@@ -94,11 +94,18 @@ def main() -> int:
     ap.add_argument("--data", default="data/quality")
     ap.add_argument("--device", default=None)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--rerank-arms", default="",
+                    help="comma-separated base arms whose top --rerank-depth gets cross-encoder reranked")
+    ap.add_argument("--rerank-depth", type=int, default=50)
     args = ap.parse_args()
 
     chunkings = [c for c in args.chunkings.split(",") if c]
     arms = [a for a in args.arms.split(",") if a]
     ks = tuple(int(k) for k in args.ks.split(",") if k)
+    rerank_arms = [a for a in args.rerank_arms.split(",") if a]
+    unknown = set(rerank_arms) - set(arms)
+    if unknown:
+        raise SystemExit(f"--rerank-arms must be a subset of --arms; unknown: {sorted(unknown)}")
 
     t0 = time.time()
     instances = D.load(args.dataset, args.data)
@@ -116,6 +123,18 @@ def main() -> int:
     cache = EmbedCache(Path(args.data) / "cache", embedder.spec["slug"])
     qp, pp = embedder.spec["query_prefix"], embedder.spec["passage_prefix"]
     print(f"[embed] model={args.model}, device={embedder.device}, cache has {len(cache.index)} texts")
+
+    reranker = None
+    ce_cache = None
+    if rerank_arms:
+        from .rerank import CrossEncoderReranker
+
+        reranker = CrossEncoderReranker(device=args.device)
+        # Pair scores depend only on the two texts, so the cache is shared
+        # across first-stage encoders, chunkings and datasets.
+        ce_cache = EmbedCache(Path(args.data) / "cache", "ce-msmarco-minilm-l6")
+        print(f"[rerank] ce depth={args.rerank_depth}, device={reranker.device}, "
+              f"cache has {len(ce_cache.index)} pairs")
 
     results: dict[str, dict] = {}
     for chunking in chunkings:
@@ -151,6 +170,11 @@ def main() -> int:
         }
 
         per_arm_scores: dict[str, list[M.InstanceScore]] = defaultdict(list)
+        # Pass 1: base rankings for every instance and arm. Rerank candidates
+        # (top `rerank_depth` of each base ranking) are collected rather than
+        # scored inline, so the cross-encoder sees one large batched workload
+        # instead of 470 tiny ones.
+        base_rankings: dict[tuple[str, str], np.ndarray] = {}
         for inst in scored_instances:
             chunks = haystacks[inst.haystack_key]
             qvec = cache.gather([_hash_uid(qp + inst.question)])[0]
@@ -160,6 +184,38 @@ def main() -> int:
             for arm in arms:
                 ranking = rank_arm(arm, bm, cos, ages)
                 per_arm_scores[arm].append(M.score_ranking(ranking, chunks, inst, ks=ks))
+                if arm in rerank_arms:
+                    base_rankings[(inst.id, arm)] = ranking
+
+        # Pass 2: cross-encoder rerank of the wide head of each base ranking.
+        if rerank_arms:
+            from .rerank import apply_rerank, pair_key
+
+            depth = args.rerank_depth
+            need: dict[str, tuple[str, str]] = {}
+            for inst in scored_instances:
+                chunks = haystacks[inst.haystack_key]
+                for arm in rerank_arms:
+                    for ci in base_rankings[(inst.id, arm)][:depth]:
+                        k = pair_key(inst.question, chunks[ci].text)
+                        need.setdefault(k, (inst.question, chunks[ci].text))
+            todo = ce_cache.missing(list(need))
+            if todo:
+                print(f"  scoring {len(todo)} new CE pairs ({len(need)-len(todo)} cached)")
+                scores = reranker.score_pairs([need[k] for k in todo])
+                ce_cache.add(todo, scores.reshape(-1, 1))
+                ce_cache.save()
+
+            for inst in scored_instances:
+                chunks = haystacks[inst.haystack_key]
+                for arm in rerank_arms:
+                    ranking = base_rankings[(inst.id, arm)]
+                    keys = [pair_key(inst.question, chunks[ci].text) for ci in ranking[:depth]]
+                    ce_scores = ce_cache.gather(keys).reshape(-1)
+                    reranked = apply_rerank(ranking, depth, ce_scores)
+                    per_arm_scores[f"{arm}+ce{depth}"].append(
+                        M.score_ranking(reranked, chunks, inst, ks=ks)
+                    )
 
         results[chunking] = {
             arm: M.aggregate(scores, n_abst, ks=ks).__dict__
@@ -169,7 +225,7 @@ def main() -> int:
 
         hdr = f"  {'arm':14} {'sess_r@10':>9} {'complete@10':>11} {'turn_r@10':>9} {'mrr':>6} {'tok@10':>8}"
         print(hdr)
-        for arm in arms:
+        for arm in results[chunking]:  # includes any +ce rerank arms
             m = results[chunking][arm]["by_metric"]
             print(
                 f"  {arm:14} {m['session_recall@10']:9.3f} {m['complete@10']:11.3f} "

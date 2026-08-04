@@ -215,6 +215,40 @@ def encoder_section(base: dict, e5: dict, dataset: str) -> list[str]:
     return out
 
 
+def rerank_section(files: dict[str, dict]) -> list[str]:
+    """Did the cross-encoder turn k=50 recall into small-k precision?
+
+    For each base arm: its own complete@5/10, the +ce50 version's, and the
+    base complete@50 -- the ceiling the reranker had available to compress.
+    """
+    out = [
+        "### Cross-encoder rerank — compressing k=50 into k=5-10",
+        "",
+        "First stage retrieves 50 turn chunks; `ms-marco-MiniLM-L6` reranks "
+        "them. `ceiling` is the base arm's complete@50 — the recall available "
+        "to the reranker. Δ@5 is reranked minus base at complete@5.",
+        "",
+        "| dataset / encoder | base arm | c@5 → +ce | Δ@5 | c@10 → +ce | ceiling | tok@10 → +ce |",
+        "|---|---|--:|--:|--:|--:|--:|",
+    ]
+    for label, d in files.items():
+        arms = d["results"]["turn"]
+        for base in ("vector", "hybrid"):
+            ce = f"{base}+ce50"
+            if base not in arms or ce not in arms:
+                continue
+            b, r = arms[base]["by_metric"], arms[ce]["by_metric"]
+            out.append(
+                f"| {label} | `{base}` | {b['complete@5']:.3f} → **{r['complete@5']:.3f}** "
+                f"| {r['complete@5'] - b['complete@5']:+.3f} "
+                f"| {b['complete@10']:.3f} → **{r['complete@10']:.3f}** "
+                f"| {b['complete@50']:.3f} "
+                f"| {b['tokens@10']:,.0f} → {r['tokens@10']:,.0f} |"
+            )
+    out.append("")
+    return out
+
+
 def main() -> int:
     parts: list[str] = [MARKER, ""]
     for name, fn in (
