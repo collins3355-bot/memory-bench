@@ -11,10 +11,12 @@ actually hard?
 The short answer, on the hardware below: **the budget is comfortable, and almost
 all of it goes to the vector scan — but the fix is eight threads, not a vector
 database.** And on the follow-up question — does fast retrieval find the *right*
-memories? — the quality eval below says: hybrid lexical+dense gets you to ~0.88
-evidence-complete@10 on LongMemEval-S, naive recency weighting is actively
-destructive, and the real losses are multi-session assembly and multi-hop
-reasoning, not similarity search.
+memories? — the quality eval below says: a retrieval-trained encoder over small
+chunks reaches 0.91 evidence-complete@10 on LongMemEval-S, retrieving *wider*
+(k=50 over turn-sized chunks) solves even multi-session assembly at 0.98, naive
+recency weighting is actively destructive with every encoder tested, and the
+open problem is squeezing wide retrieval back into a small context — reranking —
+not similarity search.
 
 ## The claims under test
 
@@ -52,7 +54,8 @@ Measured on the machine recorded in `results/*.json`:
 | Chip | Apple M1 Max (8 performance + 2 efficiency cores, 32-core GPU, 16-core ANE) |
 | Memory | 64 GB unified |
 | numpy BLAS | Accelerate |
-| Model | `all-MiniLM-L6-v2` — 22.7M params, 384 dims, 6 layers |
+| Perf model | `all-MiniLM-L6-v2` — 22.7M params, 384 dims, 6 layers |
+| Quality encoders | MiniLM-L6 and `e5-small-v2` (33M, 12 layers, query/passage prefixes) |
 
 <!-- RESULTS -->
 
@@ -214,6 +217,45 @@ LoCoMo: 10 long conversations, ~2k questions with per-turn evidence labels. 1986
 | `vector_time` | 0.210 | 0.575 | 0.213 | 0.598 |
 | `hybrid_time` | 0.335 | 0.800 | 0.404 | 0.843 |
 
+### Does retrieving more fix the hard questions? (k-sweep)
+
+complete@k for the `hybrid` arm on longmemeval_s, overall and for the hardest type (multi-session), as k grows.
+
+| chunking | slice | c@5 | c@10 | c@20 | c@50 | tokens@50 |
+|---|---|--:|--:|--:|--:|--:|
+| turn | overall | 0.774 | 0.881 | 0.943 | 0.981 | 11,465 |
+| turn | multi-session | 0.579 | 0.785 | 0.901 | 0.975 | 12,142 |
+| window | overall | 0.777 | 0.887 | 0.938 | 0.987 | 48,660 |
+| window | multi-session | 0.529 | 0.793 | 0.884 | 0.967 | 49,450 |
+| session | overall | 0.860 | 0.932 | 0.981 | 1.000 | 109,649 |
+| session | multi-session | 0.777 | 0.876 | 0.959 | 1.000 | 109,926 |
+
+### Encoder sweep — longmemeval_s
+
+Same grid, dense encoder swapped: MiniLM-L6 (22.7M, mean-pool) vs e5-small-v2 (33M, 12 layers, asymmetric query/passage prefixes). complete@10; Δ is e5 minus MiniLM.
+
+| chunking | arm | MiniLM | e5-small | Δ |
+|---|---|--:|--:|--:|
+| turn | `vector` | 0.832 | 0.906 | +0.074 |
+| turn | `hybrid` | 0.881 | 0.898 | +0.017 |
+| window | `vector` | 0.868 | 0.891 | +0.023 |
+| window | `hybrid` | 0.887 | 0.866 | -0.021 |
+| session | `vector` | 0.883 | 0.877 | -0.006 |
+| session | `hybrid` | 0.932 | 0.947 | +0.015 |
+
+### Encoder sweep — locomo
+
+Same grid, dense encoder swapped: MiniLM-L6 (22.7M, mean-pool) vs e5-small-v2 (33M, 12 layers, asymmetric query/passage prefixes). complete@10; Δ is e5 minus MiniLM.
+
+| chunking | arm | MiniLM | e5-small | Δ |
+|---|---|--:|--:|--:|
+| turn | `vector` | 0.690 | 0.817 | +0.127 |
+| turn | `hybrid` | 0.790 | 0.828 | +0.037 |
+| window | `vector` | 0.690 | 0.813 | +0.123 |
+| window | `hybrid` | 0.779 | 0.812 | +0.033 |
+| session | `vector` | 0.556 | 0.586 | +0.029 |
+| session | `hybrid` | 0.798 | 0.805 | +0.007 |
+
 <!-- /RESULTS -->
 
 > The ANE-residency column is a property of the converted *package*, measured
@@ -315,81 +357,96 @@ retrieval finds the *labelled evidence* on LongMemEval-S and LoCoMo. Scores are
 evidence recall, and the strictest column — complete@10, all evidence sessions
 present in the top 10 chunks — is the one quoted below unless stated otherwise.
 
-**Hybrid lexical+dense fusion wins wherever both parents are healthy — and
-quietly poisons the ranking where one is not.** Parameter-free RRF over BM25
-and MiniLM ranks beats both parents at every chunking on LongMemEval-S
-(0.881 / 0.887 / 0.932 for turn / window / session, vs 0.830-0.902 for the
-best single retriever) and at turn granularity on LoCoMo (0.790 vs 0.759).
-But the fine print matters: on LoCoMo at session granularity — where the dense
-parent is crippled by truncation (below) — fusion drags BM25 *down* (0.798 vs
-0.826 at k=10), BM25 beats hybrid on MRR at every chunking, and at complete@5
-the gap is 17 points (0.746 vs 0.575). Fusion's wins live at k=10; a broken
-parent poisons the early ranks first. The design rule is therefore not "always
-fuse" but *fuse healthy parents, and validate each parent separately at small
-k before shipping the fusion*.
+**Fusion failures are a small-k phenomenon.** With the weaker encoder
+(MiniLM), hybrid RRF beats both parents at every LongMemEval-S chunking
+(0.881 / 0.887 / 0.932 vs 0.832-0.902 for the best single retriever). With
+clearly unequal parents at k≤10, fusion is fragile — it costs recall against
+the stronger e5 parent on LongMemEval-S turn chunks (0.898 fused vs 0.906
+dense-only at k=10), and the truncation-crippled dense parent drags BM25 down
+on LoCoMo sessions (0.798 vs 0.826 at k=10; a 17-point gap at complete@5) —
+though not reliably: on LoCoMo turn chunks e5 outguns BM25 by a similar margin
+and fusion still helps (0.828). What *is* consistent is the k-dependence: by
+k=20, hybrid beats both parents at every operating point in the grid,
+including over the broken parent (LoCoMo session: 0.942 vs BM25's 0.931) and
+over the dominant one (e5 turn: 0.955 vs 0.949, extending to 0.991 vs 0.985 at
+k=50). Practical rule: *at small k, fusion needs validating against the
+stronger parent; at k≥20 it is safe to fuse everything measured here — except
+recency, below.*
 
-**Dense-only retrieval is never the best arm — but where the encoder wins or
-loses is about chunk shape, not a constant.** Across all six operating points
-(two datasets × three chunkings), plain MiniLM vectors never take first place:
-hybrid wins five, BM25 alone wins the sixth. The per-chunking story has real
-texture: vectors beat BM25 outright at window granularity on LongMemEval-S
-(0.868 vs 0.809), tie it at turn level, and collapse against it on LoCoMo
-sessions (0.556 vs 0.826). That collapse is structural, not a tuning issue:
-the encoder embeds only the first 256 tokens of a long session while BM25 sees
-all of it. Small-encoder dense retrieval wants small chunks; lexical retrieval
-tolerates any size. Whether a stronger encoder changes this is a question the
-harness can now answer cheaply (`--model` sweep is future work).
+**"Dense-only never wins" was mostly an artifact of the weak encoder — but the
+chunk-shape constraint is not.** With MiniLM, vectors took first place at
+almost nothing (one cell: window complete@20). e5-small-v2 (33M params, still
+tiny) changes the picture: at LongMemEval-S turn granularity it is the best
+k=10 arm — 0.906 complete@10 at ~2.0k retrieved tokens, beating every MiniLM
+configuration at turn or window chunking (hybrid retakes the lead at other
+k) — and e5+hybrid at session granularity sets the overall ceiling (0.947).
+The encoder swap also does half the k-sweep's job at fixed cost: multi-session
+at k=10 jumps 0.785 (MiniLM hybrid) → 0.876 (e5 dense-only) with *fewer*
+tokens. What does *not* flip is the truncation collapse: on LoCoMo session
+chunks e5 still loses to BM25 by 24 points (0.586 vs 0.826), because a
+256-token encoder window cannot represent a long session no matter how well it
+was trained. Small encoders want small chunks; that constraint survives the
+encoder upgrade. The cost side: e5 is 12 layers to MiniLM's 6, roughly double
+the encode time — a trade the perf harness can now quantify on the ANE.
 
 **Un-gated recency fusion is a catastrophe, including on the questions it was
 meant to help.** Giving recency an equal RRF vote (`vector_time`) drops
 complete@10 from 0.832 to 0.300 overall — and on *knowledge-update* questions,
 the type recency intuitively targets, from **0.972 to 0.097**. The mechanism is
 visible in the labels: knowledge-update questions average exactly 2.0 evidence
-sessions (the stale fact and its update), and a "newest first" vote floods the
-top-10 with recent-but-irrelevant chunks while burying the older half of the
-evidence pair. Diluting recency to 1/3 of the vote (`hybrid_time`) does not
-rescue it: it never beats plain `hybrid` on any overall metric, and it loses to
-*plain BM25* on complete@5 (0.606-0.715 vs 0.721-0.834) and MRR at every
-chunking — a third of a vote for recency still wrecks the early ranks. The
-design conclusion is sharp: temporal signals must be *gated by the query*
-(detect that a question is temporal, then apply time logic), never fused
-unconditionally. This contradicts the intuitive advice — "add recency
-weighting" — that this project started with; measured, it subtracts.
+sessions (the stale fact and its update), and a "newest first" vote starves the
+older half of the evidence pair of rank. Distractor flooding is not even
+required: on the oracle split, where *only* evidence sessions are indexed,
+recency fusion still drops complete@5 from 0.750 to 0.475. Diluting recency to
+1/3 of the vote (`hybrid_time`) does not rescue it: it never beats plain
+`hybrid` on any overall metric at any chunking with either encoder — verified
+exhaustively — and at the top of the ranking it loses to plain BM25 on
+complete@5 (0.555-0.715 vs 0.713-0.834 across chunkings) and MRR, recovering
+only at deeper k. And unlike every other pathology in this section, retrieving
+wider does not fix it. The result is encoder-robust: with e5, `vector_time`
+still craters to 0.315 overall and **0.083** on knowledge-update. The design
+conclusion is sharp: temporal signals must be *gated by the query* (detect that
+a question is temporal, then apply time logic), never fused unconditionally.
+This contradicts the intuitive advice — "add recency weighting" — that this
+project started with; measured, it subtracts, with every encoder tested.
 
-**Multi-session assembly and temporal reasoning are the open problems.**
-Single-session questions are essentially solved by hybrid retrieval at turn or
-session granularity (0.97-1.00; window granularity dips to 0.90 on the small
-n=30 preference slice). The hard types, at the efficient operating point
-(hybrid, turn chunks): multi-session 0.785, temporal-reasoning 0.787.
-Session-sized chunks push those to 0.876 / 0.906 — by spending 12x the tokens
-(28.5k vs 2.4k per query at k=10). And the hardest slice in either benchmark
-is LoCoMo's multi-hop category (n=281): the best score *any* arm reaches at
-any chunking is **0.470**. Assembling evidence *sets* and reasoning about
-time, not similarity search per se, is where memory-retrieval quality is
-actually lost.
-
-**Chunk granularity is a recall-vs-context-budget dial, and turn chunks are the
-efficient point.** On LongMemEval-S, hybrid at turn granularity reaches 0.881
-complete@10 within ~2.4k retrieved tokens; session granularity buys +5 points
-for 12x the context. A memory system that hands its LLM 28k tokens per query
-has reinvented the long-context problem retrieval was meant to solve. Turn or
-window chunks at k=10, hybrid ranking, is the sane default.
+**Retrieving wider dissolves most of the "hard question" problem — width over
+coarseness is the architecture.** At k=10, multi-session (0.785) and
+temporal-reasoning (0.787) look like open research problems. The k-sweep says
+otherwise: with MiniLM hybrid over turn chunks, multi-session climbs
+0.579 → 0.785 → 0.901 → **0.975** at k=5/10/20/50, and temporal-reasoning
+reaches 0.961 at k=50 — inside ~11.5k retrieved tokens. Even LoCoMo's brutal
+multi-hop slice (0.377 complete@10, the hardest number in either benchmark)
+rises to 0.819 at k=50 with MiniLM and 0.865 with e5. Width also rescues
+fusion: the small-k fusion failures above all invert by k=20, leaving un-gated
+recency as the *only* pathology retrieving wider cannot fix. Coarser chunks
+were never the answer: turn chunks at
+k=20 beat session chunks at k=10 on *both* recall (0.943 vs 0.932) *and*
+tokens (4.9k vs 28.5k). Retrieval recall is largely a solved problem if you
+retrieve wide over small chunks; what k=50 leaves unsolved is that 11.5k tokens
+is still too much to hand an LLM per query. **The open problem in local memory
+is the precision stage — reranking ~50 wide-net candidates down to a small
+context — plus query-gated time logic.** That is where a memory engine gets to
+differentiate.
 
 **LoCoMo is the stress test, not an echo.** Its shape (10 very long two-speaker
 histories, per-turn evidence, 455 of 1,986 questions adversarial and excluded)
-is what surfaced both of the caveats above: the broken-parent fusion failure at
-session granularity, and the 0.470 ceiling on multi-hop questions. Its
-noise-level window result (hybrid 0.779 vs BM25 0.771) is also a reminder that
-not every tabled difference is a finding.
+is what surfaced the broken-parent fusion failure at session granularity and
+the multi-hop floor (0.377 at k=10 — recoverable to 0.865 at k=50 under e5,
+but still the worst wide-retrieval residual anywhere). Its noise-level window
+result (hybrid 0.779 vs BM25 0.771) is also a reminder that not every tabled
+difference is a finding.
 
 ### What this still does not measure
 
 Answer accuracy (whether an LLM given the retrieved chunks answers correctly) —
 evidence recall is the retrieval system's own scoreboard, deliberately isolated
-from the downstream model. Stronger encoders, query rewriting, and gated
-temporal logic are the obvious next arms; the harness embeds ~250k chunks once
-into a content-addressed cache, so each additional arm costs seconds, not
-hours. Milestone 2 (compression/consolidation) remains unmeasured: it belongs
+from the downstream model. The obvious next arms are the ones the k-sweep
+points at: a reranking stage (cross-encoder or LLM) squeezing k=50 candidates
+into a small context, query-gated time logic, and query rewriting; the harness
+embeds ~300k chunks once into a content-addressed cache, so each additional arm
+costs seconds, not hours. Milestone 2 (compression/consolidation) remains
+unmeasured: it belongs
 at write time and idle time, never in the query path, where a single
 summarisation call would cost 500ms-5s and blow the entire latency budget a
 hundred times over.
