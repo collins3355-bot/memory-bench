@@ -1,0 +1,64 @@
+{
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "n": 600000,
+  "conditions": [
+    {
+      "condition": "idle (no indexer)",
+      "query_p50_ms": 24.822583,
+      "query_p99_ms": 27.30975,
+      "indexer_ops": 0,
+      "indexer_qos": null,
+      "slowdown_vs_idle": 1.0
+    },
+    {
+      "condition": "indexer @ user-initiated",
+      "query_p50_ms": 33.724709,
+      "query_p99_ms": 37.097292,
+      "indexer_ops": 29247,
+      "indexer_qos": "user-initiated",
+      "slowdown_vs_idle": 1.358630123222873
+    },
+    {
+      "condition": "indexer @ default",
+      "query_p50_ms": 33.448291,
+      "query_p99_ms": 38.1315,
+      "indexer_ops": 29249,
+      "indexer_qos": "default",
+      "slowdown_vs_idle": 1.3474943763910465
+    },
+    {
+      "condition": "indexer @ utility",
+      "query_p50_ms": 33.676333,
+      "query_p99_ms": 36.591,
+      "indexer_ops": 29806,
+      "indexer_qos": "utility",
+      "slowdown_vs_idle": 1.3566812527124996
+    },
+    {
+      "condition": "indexer @ background",
+      "query_p50_ms": 25.104458,
+      "query_p99_ms": 53.904541,
+      "indexer_ops": 3612,
+      "indexer_qos": "background",
+      "slowdown_vs_idle": 1.0113555869669164
+    }
+  ]
+}

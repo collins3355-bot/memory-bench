@@ -1,0 +1,373 @@
+{
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "timer_floor_ms": 4.1e-05,
+  "scales": {
+    "60000": {
+      "corpus": {
+        "n": 60000,
+        "d": 384,
+        "clusters": 2000,
+        "within_cluster": 0.72,
+        "anisotropy": 0.25,
+        "components": {
+          "common": 0.5,
+          "cluster": 0.6855654600401044,
+          "noise": 0.5291502622129182
+        },
+        "seed": 0,
+        "bytes_fp32": 92160000,
+        "mean_pair_cosine": 0.24853286147117615,
+        "p99_pair_cosine": 0.3530675768852234,
+        "max_pair_cosine": 0.7918586730957031,
+        "mean_abs_coord": 0.04072181507945061,
+        "sign_agreement_with_mean": 0.6669273376464844
+      },
+      "backends": [
+        {
+          "label": "flat-fp32",
+          "n": 308,
+          "p50": 2.436042,
+          "p90": 2.651916,
+          "p99": 2.803334,
+          "minimum": 2.02575,
+          "mean": 2.4344197435064934,
+          "stdev": 0.17404635585880465,
+          "total_s": 0.750119791016914,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 5.791080184280872e-06,
+          "index_bytes": 92160000,
+          "build_notes": {
+            "structure": "none"
+          }
+        },
+        {
+          "label": "flat-fp32-t8",
+          "n": 516,
+          "p50": 1.442333,
+          "p90": 1.542416,
+          "p99": 1.684291,
+          "minimum": 1.301375,
+          "mean": 1.4537235910852713,
+          "stdev": 0.07185435017666969,
+          "total_s": 0.7510489999549463,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 3.341608680784702e-05,
+          "index_bytes": 92160000,
+          "build_notes": {
+            "structure": "none",
+            "threads": 8,
+            "blocks": 8
+          }
+        },
+        {
+          "label": "binary-raw-rr1000",
+          "n": 428,
+          "p50": 1.771959,
+          "p90": 1.882667,
+          "p99": 1.946,
+          "minimum": 1.44775,
+          "mean": 1.754695656542056,
+          "stdev": 0.10750926360054329,
+          "total_s": 0.7513003339990973,
+          "notes": {},
+          "recall_at_k": 0.99921875,
+          "build_seconds": 0.012546541984193027,
+          "index_bytes": 95040000,
+          "build_notes": {
+            "code_bytes": 2880000,
+            "fp32_bytes_for_rerank": 92160000,
+            "centered": false,
+            "rerank_depth": 1000
+          }
+        },
+        {
+          "label": "binary-centered-rr1000",
+          "n": 411,
+          "p50": 1.834583,
+          "p90": 1.9495,
+          "p99": 2.072459,
+          "minimum": 1.452041,
+          "mean": 1.8249167347931874,
+          "stdev": 0.1380867707272973,
+          "total_s": 0.7503674160689116,
+          "notes": {},
+          "recall_at_k": 0.99921875,
+          "build_seconds": 0.012176874908618629,
+          "index_bytes": 95040000,
+          "build_notes": {
+            "code_bytes": 2880000,
+            "fp32_bytes_for_rerank": 92160000,
+            "centered": true,
+            "rerank_depth": 1000
+          }
+        },
+        {
+          "label": "hnsw-m16-ef64",
+          "n": 1694,
+          "p50": 0.428541,
+          "p90": 0.559417,
+          "p99": 0.690083,
+          "minimum": 0.267333,
+          "mean": 0.4422416121605667,
+          "stdev": 0.0880288326910929,
+          "total_s": 0.7502804170362651,
+          "notes": {},
+          "recall_at_k": 0.98359375,
+          "build_seconds": 8.22148437506985,
+          "index_bytes": 151695784,
+          "build_notes": {
+            "connectivity": 16,
+            "ef_construct": 128,
+            "ef_search": 64
+          }
+        }
+      ]
+    },
+    "600000": {
+      "corpus": {
+        "n": 600000,
+        "d": 384,
+        "clusters": 2000,
+        "within_cluster": 0.72,
+        "anisotropy": 0.25,
+        "components": {
+          "common": 0.5,
+          "cluster": 0.6855654600401044,
+          "noise": 0.5291502622129182
+        },
+        "seed": 0,
+        "bytes_fp32": 921600000,
+        "mean_pair_cosine": 0.24908852577209473,
+        "p99_pair_cosine": 0.3533361554145813,
+        "max_pair_cosine": 0.789628267288208,
+        "mean_abs_coord": 0.04072512686252594,
+        "sign_agreement_with_mean": 0.6670792897542318
+      },
+      "backends": [
+        {
+          "label": "flat-fp32",
+          "n": 60,
+          "p50": 24.864834,
+          "p90": 25.604708,
+          "p99": 26.205375,
+          "minimum": 20.698292,
+          "mean": 24.39264305,
+          "stdev": 1.3254656558241134,
+          "total_s": 1.4635995000135154,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 2.124928869307041e-06,
+          "index_bytes": 921600000,
+          "build_notes": {
+            "structure": "none"
+          }
+        },
+        {
+          "label": "flat-fp32-t8",
+          "n": 61,
+          "p50": 12.321875,
+          "p90": 12.929417,
+          "p99": 13.807875,
+          "minimum": 11.55975,
+          "mean": 12.402239032786884,
+          "stdev": 0.4459934649834016,
+          "total_s": 0.7566078340169042,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 2.8499984182417393e-05,
+          "index_bytes": 921600000,
+          "build_notes": {
+            "structure": "none",
+            "threads": 8,
+            "blocks": 8
+          }
+        },
+        {
+          "label": "binary-raw-rr1000",
+          "n": 60,
+          "p50": 16.106291,
+          "p90": 17.412167,
+          "p99": 17.765958,
+          "minimum": 13.396209,
+          "mean": 15.924631883333335,
+          "stdev": 1.1914942790505416,
+          "total_s": 0.9555504579329863,
+          "notes": {},
+          "recall_at_k": 0.99296875,
+          "build_seconds": 0.10412775003351271,
+          "index_bytes": 950400000,
+          "build_notes": {
+            "code_bytes": 28800000,
+            "fp32_bytes_for_rerank": 921600000,
+            "centered": false,
+            "rerank_depth": 1000
+          }
+        },
+        {
+          "label": "binary-centered-rr1000",
+          "n": 60,
+          "p50": 16.076583,
+          "p90": 17.604375,
+          "p99": 26.884083,
+          "minimum": 13.341792,
+          "mean": 16.643979883333333,
+          "stdev": 3.489228812093164,
+          "total_s": 0.9986754580168054,
+          "notes": {},
+          "recall_at_k": 0.996875,
+          "build_seconds": 0.12218958302401006,
+          "index_bytes": 950400000,
+          "build_notes": {
+            "code_bytes": 28800000,
+            "fp32_bytes_for_rerank": 921600000,
+            "centered": true,
+            "rerank_depth": 1000
+          }
+        },
+        {
+          "label": "hnsw-m16-ef64",
+          "n": 1831,
+          "p50": 0.385667,
+          "p90": 0.608625,
+          "p99": 0.787708,
+          "minimum": 0.205375,
+          "mean": 0.40928544238121245,
+          "stdev": 0.1393811627940511,
+          "total_s": 0.750119791016914,
+          "notes": {},
+          "recall_at_k": 0.7093750000000001,
+          "build_seconds": 60.077960500027984,
+          "index_bytes": 1202368808,
+          "build_notes": {
+            "connectivity": 16,
+            "ef_construct": 128,
+            "ef_search": 64
+          }
+        }
+      ]
+    },
+    "6000000": {
+      "corpus": {
+        "n": 6000000,
+        "d": 384,
+        "clusters": 2000,
+        "within_cluster": 0.72,
+        "anisotropy": 0.25,
+        "components": {
+          "common": 0.5,
+          "cluster": 0.6855654600401044,
+          "noise": 0.5291502622129182
+        },
+        "seed": 0,
+        "bytes_fp32": 9216000000,
+        "mean_pair_cosine": 0.2499941736459732,
+        "p99_pair_cosine": 0.3540005385875702,
+        "max_pair_cosine": 0.7835817933082581,
+        "mean_abs_coord": 0.04071292281150818,
+        "sign_agreement_with_mean": 0.6675205230712891
+      },
+      "backends": [
+        {
+          "label": "flat-fp32",
+          "n": 60,
+          "p50": 242.979416,
+          "p90": 258.500125,
+          "p99": 266.986584,
+          "minimum": 209.017625,
+          "mean": 241.2804313,
+          "stdev": 15.088176194126255,
+          "total_s": 14.476892124977894,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 3.6249402910470963e-06,
+          "index_bytes": 9216000000,
+          "build_notes": {
+            "structure": "none"
+          }
+        },
+        {
+          "label": "flat-fp32-t8",
+          "n": 60,
+          "p50": 111.900416,
+          "p90": 114.309125,
+          "p99": 142.012625,
+          "minimum": 108.504791,
+          "mean": 113.52347705000001,
+          "stdev": 9.358638403329177,
+          "total_s": 6.8114748750813305,
+          "notes": {},
+          "recall_at_k": 1.0,
+          "build_seconds": 2.4374923668801785e-05,
+          "index_bytes": 9216000000,
+          "build_notes": {
+            "structure": "none",
+            "threads": 8,
+            "blocks": 8
+          }
+        },
+        {
+          "label": "binary-raw-rr1000",
+          "n": 60,
+          "p50": 146.566583,
+          "p90": 162.033375,
+          "p99": 165.017333,
+          "minimum": 125.999541,
+          "mean": 147.04958883333333,
+          "stdev": 10.655775210447153,
+          "total_s": 8.823021415970288,
+          "notes": {},
+          "recall_at_k": 0.8625,
+          "build_seconds": 1.377367707900703,
+          "index_bytes": 9504000000,
+          "build_notes": {
+            "code_bytes": 288000000,
+            "fp32_bytes_for_rerank": 9216000000,
+            "centered": false,
+            "rerank_depth": 1000
+          }
+        },
+        {
+          "label": "binary-centered-rr1000",
+          "n": 60,
+          "p50": 158.691458,
+          "p90": 169.781583,
+          "p99": 175.267542,
+          "minimum": 128.301084,
+          "mean": 157.21079231666667,
+          "stdev": 13.22464952447547,
+          "total_s": 9.432713833986782,
+          "notes": {},
+          "recall_at_k": 0.9003906250000001,
+          "build_seconds": 1.4215463330037892,
+          "index_bytes": 9504000000,
+          "build_notes": {
+            "code_bytes": 288000000,
+            "fp32_bytes_for_rerank": 9216000000,
+            "centered": true,
+            "rerank_depth": 1000
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "n": 600000,
+  "embedder": "coreml-reference-ane",
+  "seq_len": 64,
+  "budget_ms": 50.0,
+  "stages": {
+    "1_tokenise": {
+      "label": "tokenise",
+      "n": 4798,
+      "p50": 0.098791,
+      "p90": 0.108375,
+      "p99": 0.209584,
+      "minimum": 0.094208,
+      "mean": 0.10379209295539808,
+      "stdev": 0.02006615741468977,
+      "total_s": 0.5000057920115069,
+      "notes": {}
+    },
+    "2_embed": {
+      "label": "embed",
+      "n": 404,
+      "p50": 0.911708,
+      "p90": 2.341875,
+      "p99": 2.578084,
+      "minimum": 0.7665,
+      "mean": 1.238600948019802,
+      "stdev": 0.6201427266263023,
+      "total_s": 0.5009428330231458,
+      "notes": {}
+    },
+    "3_search": {
+      "label": "search",
+      "n": 200,
+      "p50": 12.034833,
+      "p90": 13.414292,
+      "p99": 18.388333,
+      "minimum": 11.413208,
+      "mean": 12.487989345,
+      "stdev": 1.8046869717956786,
+      "total_s": 2.4978370829485357,
+      "notes": {}
+    },
+    "4_hydrate": {
+      "label": "hydrate (sqlite)",
+      "n": 38140,
+      "p50": 0.012458,
+      "p90": 0.013125,
+      "p99": 0.017083,
+      "minimum": 0.011791,
+      "mean": 0.012820959648662821,
+      "stdev": 0.003152800916113567,
+      "total_s": 0.500002000015229,
+      "notes": {}
+    },
+    "5_end_to_end": {
+      "label": "END TO END",
+      "n": 200,
+      "p50": 14.14075,
+      "p90": 14.885417,
+      "p99": 15.840958,
+      "minimum": 13.353042,
+      "mean": 14.221126865,
+      "stdev": 0.5388909026617602,
+      "total_s": 2.844426875002682,
+      "notes": {}
+    }
+  }
+}

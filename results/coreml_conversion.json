@@ -1,0 +1,179 @@
+{
+  "ane_s128": {
+    "package": "models/ane_s128.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.563,
+        "NeuralEngine": 0.437,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.437
+    }
+  },
+  "ane_s256": {
+    "package": "models/ane_s256.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.348,
+        "NeuralEngine": 0.652,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.652
+    }
+  },
+  "ane_s32": {
+    "package": "models/ane_s32.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.497,
+        "NeuralEngine": 0.503,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.503
+    }
+  },
+  "ane_s64": {
+    "package": "models/ane_s64.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.331,
+        "NeuralEngine": 0.669,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.669
+    }
+  },
+  "reference_s128": {
+    "package": "models/reference_s128.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.398,
+        "NeuralEngine": 0.602,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.602
+    }
+  },
+  "reference_s256": {
+    "package": "models/reference_s256.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.217,
+        "NeuralEngine": 0.783,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.783
+    }
+  },
+  "reference_s32": {
+    "package": "models/reference_s32.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 169
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.0,
+      "cpu_fraction": 1.0,
+      "gpu_fraction": 0.0
+    }
+  },
+  "reference_s64": {
+    "package": "models/reference_s64.mlpackage",
+    "ok": true,
+    "plan": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.198,
+        "NeuralEngine": 0.802,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.802
+    }
+  }
+}

@@ -1,0 +1,1343 @@
+{
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "backends": [
+    {
+      "label": "torch-cpu",
+      "n": 161,
+      "p50": 4.6155,
+      "p90": 4.91125,
+      "p99": 5.14575,
+      "minimum": 4.318958,
+      "mean": 4.659937639751552,
+      "stdev": 0.17662406133094644,
+      "total_s": 0.7505226669600233,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.0000001192092896
+    },
+    {
+      "label": "torch-mps",
+      "n": 110,
+      "p50": 5.325708,
+      "p90": 9.555292,
+      "p99": 16.071208,
+      "minimum": 4.642167,
+      "mean": 6.874462090909091,
+      "stdev": 2.728555721189144,
+      "total_s": 0.7564452500082552,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.0
+    },
+    {
+      "label": "coreml-reference-cpu",
+      "n": 761,
+      "p50": 0.944916,
+      "p90": 1.010416,
+      "p99": 2.026125,
+      "minimum": 0.905208,
+      "mean": 0.9847006070959264,
+      "stdev": 0.2779758712727024,
+      "total_s": 0.7503965420182794,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.000233769416809,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 169
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.0,
+        "cpu_fraction": 1.0,
+        "gpu_fraction": 0.0
+      }
+    },
+    {
+      "label": "coreml-reference-gpu",
+      "n": 170,
+      "p50": 4.304541,
+      "p90": 4.937541,
+      "p99": 5.130708,
+      "minimum": 2.439083,
+      "mean": 4.4249456470588235,
+      "stdev": 1.4722088357707848,
+      "total_s": 0.752635583980009,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.0001622438430786,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 169
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.0,
+        "cpu_fraction": 1.0,
+        "gpu_fraction": 0.0
+      }
+    },
+    {
+      "label": "coreml-reference-ane",
+      "n": 170,
+      "p50": 4.408666,
+      "p90": 4.462916,
+      "p99": 4.8715,
+      "minimum": 4.310625,
+      "mean": 4.423339647058824,
+      "stdev": 0.09374493615421466,
+      "total_s": 0.7521647089160979,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.0000001192092896,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 169
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.0,
+        "cpu_fraction": 1.0,
+        "gpu_fraction": 0.0
+      }
+    },
+    {
+      "label": "coreml-ane-cpu",
+      "n": 802,
+      "p50": 0.924167,
+      "p90": 0.974667,
+      "p99": 1.104958,
+      "minimum": 0.888208,
+      "mean": 0.9345326658354114,
+      "stdev": 0.04108248142545522,
+      "total_s": 0.7506294579943642,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 1.000109076499939,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.497,
+          "NeuralEngine": 0.503,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.503
+      }
+    },
+    {
+      "label": "coreml-ane-gpu",
+      "n": 90,
+      "p50": 8.355833,
+      "p90": 8.44275,
+      "p99": 10.480208,
+      "minimum": 6.738042,
+      "mean": 8.397462944444444,
+      "stdev": 0.4677856358361489,
+      "total_s": 0.7559322080342099,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 0.9998381733894348,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.497,
+          "NeuralEngine": 0.503,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.503
+      }
+    },
+    {
+      "label": "coreml-ane-ane",
+      "n": 572,
+      "p50": 0.978625,
+      "p90": 2.074416,
+      "p99": 2.170875,
+      "minimum": 0.820583,
+      "mean": 1.3104517027972027,
+      "stdev": 0.5245219941126741,
+      "total_s": 0.7504550840239972,
+      "notes": {},
+      "seq_len": 32,
+      "norm": 0.9991454482078552,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.497,
+          "NeuralEngine": 0.503,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.503
+      }
+    },
+    {
+      "label": "torch-cpu",
+      "n": 108,
+      "p50": 6.967709,
+      "p90": 7.196792,
+      "p99": 7.445916,
+      "minimum": 6.476666,
+      "mean": 6.972406601851851,
+      "stdev": 0.18497090900022428,
+      "total_s": 0.7532368750544265,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0
+    },
+    {
+      "label": "torch-mps",
+      "n": 80,
+      "p50": 7.630875,
+      "p90": 20.361042,
+      "p99": 28.664291,
+      "minimum": 6.470125,
+      "mean": 10.348447875,
+      "stdev": 5.802086042766017,
+      "total_s": 0.828097959049046,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0
+    },
+    {
+      "label": "coreml-reference-cpu",
+      "n": 462,
+      "p50": 1.602667,
+      "p90": 1.776458,
+      "p99": 1.94125,
+      "minimum": 1.431708,
+      "mean": 1.6232912878787877,
+      "stdev": 0.10494832465754651,
+      "total_s": 0.7513306670589373,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0002740621566772,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.198,
+          "NeuralEngine": 0.802,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.802
+      }
+    },
+    {
+      "label": "coreml-reference-gpu",
+      "n": 167,
+      "p50": 4.47075,
+      "p90": 5.090375,
+      "p99": 5.264,
+      "minimum": 2.506917,
+      "mean": 4.489130185628743,
+      "stdev": 1.8442644808717432,
+      "total_s": 0.750110707944259,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0000054836273193,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.198,
+          "NeuralEngine": 0.802,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.802
+      }
+    },
+    {
+      "label": "coreml-reference-ane",
+      "n": 598,
+      "p50": 0.929458,
+      "p90": 2.312875,
+      "p99": 2.576417,
+      "minimum": 0.76275,
+      "mean": 1.2538607642140467,
+      "stdev": 0.6693652143151976,
+      "total_s": 0.7508618340361863,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0004018545150757,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.198,
+          "NeuralEngine": 0.802,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.802
+      }
+    },
+    {
+      "label": "coreml-ane-cpu",
+      "n": 530,
+      "p50": 1.395666,
+      "p90": 1.562916,
+      "p99": 1.749875,
+      "minimum": 1.218209,
+      "mean": 1.4151273886792453,
+      "stdev": 0.11068265061191442,
+      "total_s": 0.7513712919317186,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 0.9999440312385559,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.331,
+          "NeuralEngine": 0.669,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.669
+      }
+    },
+    {
+      "label": "coreml-ane-gpu",
+      "n": 117,
+      "p50": 6.388,
+      "p90": 6.9605,
+      "p99": 10.357334,
+      "minimum": 5.28475,
+      "mean": 6.40808441025641,
+      "stdev": 0.7534505582363059,
+      "total_s": 0.7500557500170544,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0000358819961548,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.331,
+          "NeuralEngine": 0.669,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.669
+      }
+    },
+    {
+      "label": "coreml-ane-ane",
+      "n": 618,
+      "p50": 0.938667,
+      "p90": 2.138166,
+      "p99": 2.300042,
+      "minimum": 0.815833,
+      "mean": 1.212675134304207,
+      "stdev": 0.5007216739993472,
+      "total_s": 0.750372959068045,
+      "notes": {},
+      "seq_len": 64,
+      "norm": 1.0000624656677246,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.331,
+          "NeuralEngine": 0.669,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.669
+      }
+    },
+    {
+      "label": "torch-cpu",
+      "n": 80,
+      "p50": 12.091083,
+      "p90": 12.909166,
+      "p99": 13.460708,
+      "minimum": 11.465375,
+      "mean": 12.22648545,
+      "stdev": 0.4875783483984882,
+      "total_s": 0.9782404579455033,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0
+    },
+    {
+      "label": "torch-mps",
+      "n": 91,
+      "p50": 8.263292,
+      "p90": 8.53075,
+      "p99": 8.705208,
+      "minimum": 7.279875,
+      "mean": 8.243165758241757,
+      "stdev": 0.25986945505380876,
+      "total_s": 0.7503592499997467,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0
+    },
+    {
+      "label": "coreml-reference-cpu",
+      "n": 266,
+      "p50": 2.784,
+      "p90": 3.042625,
+      "p99": 3.161625,
+      "minimum": 2.590875,
+      "mean": 2.8203853007518798,
+      "stdev": 0.14874689560245685,
+      "total_s": 0.751047334051691,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0002740621566772,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.398,
+          "NeuralEngine": 0.602,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.602
+      }
+    },
+    {
+      "label": "coreml-reference-gpu",
+      "n": 194,
+      "p50": 3.617667,
+      "p90": 4.906333,
+      "p99": 6.117292,
+      "minimum": 2.7185,
+      "mean": 3.8738820927835054,
+      "stdev": 0.9170450117407596,
+      "total_s": 0.7520065419375896,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 0.9999127984046936,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.398,
+          "NeuralEngine": 0.602,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.602
+      }
+    },
+    {
+      "label": "coreml-reference-ane",
+      "n": 433,
+      "p50": 1.174791,
+      "p90": 2.850834,
+      "p99": 4.894416,
+      "minimum": 1.003917,
+      "mean": 1.7323213741339492,
+      "stdev": 0.9066365970584168,
+      "total_s": 0.7508122500730678,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0006464719772339,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.398,
+          "NeuralEngine": 0.602,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.602
+      }
+    },
+    {
+      "label": "coreml-ane-cpu",
+      "n": 247,
+      "p50": 3.022,
+      "p90": 3.202833,
+      "p99": 3.50875,
+      "minimum": 2.640833,
+      "mean": 3.036358137651822,
+      "stdev": 0.13935074971861092,
+      "total_s": 0.7505418339278549,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 0.9999440312385559,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.563,
+          "NeuralEngine": 0.437,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.437
+      }
+    },
+    {
+      "label": "coreml-ane-gpu",
+      "n": 87,
+      "p50": 8.583459,
+      "p90": 9.605334,
+      "p99": 10.406375,
+      "minimum": 6.945917,
+      "mean": 8.711120183908045,
+      "stdev": 0.7981461444903538,
+      "total_s": 0.7580662500113249,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0000358819961548,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.563,
+          "NeuralEngine": 0.437,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.437
+      }
+    },
+    {
+      "label": "coreml-ane-ane",
+      "n": 589,
+      "p50": 0.93025,
+      "p90": 2.383208,
+      "p99": 4.259333,
+      "minimum": 0.848583,
+      "mean": 1.2733605415959253,
+      "stdev": 0.7205479252000302,
+      "total_s": 0.7508424170082435,
+      "notes": {},
+      "seq_len": 128,
+      "norm": 1.0000624656677246,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.563,
+          "NeuralEngine": 0.437,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.437
+      }
+    },
+    {
+      "label": "torch-cpu",
+      "n": 80,
+      "p50": 15.762167,
+      "p90": 17.105084,
+      "p99": 17.6465,
+      "minimum": 15.185209,
+      "mean": 15.9612589125,
+      "stdev": 0.6350978858735122,
+      "total_s": 1.2770173749886453,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0
+    },
+    {
+      "label": "torch-mps",
+      "n": 102,
+      "p50": 7.693459,
+      "p90": 8.596833,
+      "p99": 10.483667,
+      "minimum": 4.717208,
+      "mean": 7.378933019607843,
+      "stdev": 1.251388174632656,
+      "total_s": 0.7527850830228999,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0
+    },
+    {
+      "label": "coreml-reference-cpu",
+      "n": 131,
+      "p50": 5.729541,
+      "p90": 5.829791,
+      "p99": 5.988834,
+      "minimum": 5.496666,
+      "mean": 5.729095419847328,
+      "stdev": 0.0919345954728001,
+      "total_s": 0.7507059159688652,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0002740621566772,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.217,
+          "NeuralEngine": 0.783,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.783
+      }
+    },
+    {
+      "label": "coreml-reference-gpu",
+      "n": 265,
+      "p50": 2.721709,
+      "p90": 2.962333,
+      "p99": 3.745917,
+      "minimum": 2.613541,
+      "mean": 2.8328751962264147,
+      "stdev": 0.6535829911533079,
+      "total_s": 0.7510050000855699,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 0.9999127984046936,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.217,
+          "NeuralEngine": 0.783,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.783
+      }
+    },
+    {
+      "label": "coreml-reference-ane",
+      "n": 239,
+      "p50": 2.741125,
+      "p90": 4.218541,
+      "p99": 4.447042,
+      "minimum": 2.6805,
+      "mean": 3.1417410962343095,
+      "stdev": 0.6600352601671644,
+      "total_s": 0.7510052080033347,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0004018545150757,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 236,
+          "CPU": 12,
+          "NeuralEngine": 157
+        },
+        "total_ops": 405,
+        "executing_ops": 169,
+        "ane_fraction": 0.929,
+        "cpu_fraction": 0.071,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.217,
+          "NeuralEngine": 0.783,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.783
+      }
+    },
+    {
+      "label": "coreml-ane-cpu",
+      "n": 133,
+      "p50": 5.64975,
+      "p90": 5.742875,
+      "p99": 5.865792,
+      "minimum": 5.476667,
+      "mean": 5.651972127819549,
+      "stdev": 0.0762424500111681,
+      "total_s": 0.7518520830199122,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 0.9999440312385559,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.348,
+          "NeuralEngine": 0.652,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.652
+      }
+    },
+    {
+      "label": "coreml-ane-gpu",
+      "n": 90,
+      "p50": 8.385209,
+      "p90": 9.079125,
+      "p99": 9.365875,
+      "minimum": 6.193875,
+      "mean": 8.349787022222221,
+      "stdev": 0.7341106550840195,
+      "total_s": 0.7515732920728624,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0000358819961548,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.348,
+          "NeuralEngine": 0.652,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.652
+      }
+    },
+    {
+      "label": "coreml-ane-ane",
+      "n": 373,
+      "p50": 1.586333,
+      "p90": 3.23975,
+      "p99": 3.922583,
+      "minimum": 1.526375,
+      "mean": 2.016581962466488,
+      "stdev": 0.7549749620273845,
+      "total_s": 0.752465208992362,
+      "notes": {},
+      "seq_len": 256,
+      "norm": 1.0000624656677246,
+      "residency": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+        "op_counts": {
+          "Unassigned": 627,
+          "CPU": 15,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1125,
+        "executing_ops": 498,
+        "ane_fraction": 0.97,
+        "cpu_fraction": 0.03,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.348,
+          "NeuralEngine": 0.652,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.652
+      }
+    }
+  ],
+  "residency": {
+    "coreml-reference-cpu_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 169
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.0,
+      "cpu_fraction": 1.0,
+      "gpu_fraction": 0.0
+    },
+    "coreml-reference-gpu_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 169
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.0,
+      "cpu_fraction": 1.0,
+      "gpu_fraction": 0.0
+    },
+    "coreml-reference-ane_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s32_BF00EF02-A9CE-41CE-9967-44F9F6D99D37.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 169
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.0,
+      "cpu_fraction": 1.0,
+      "gpu_fraction": 0.0
+    },
+    "coreml-ane-cpu_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.497,
+        "NeuralEngine": 0.503,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.503
+    },
+    "coreml-ane-gpu_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.497,
+        "NeuralEngine": 0.503,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.503
+    },
+    "coreml-ane-ane_s32": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s32_023A87D9-2C40-496F-B2C5-22DED3F62653.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.497,
+        "NeuralEngine": 0.503,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.503
+    },
+    "coreml-reference-cpu_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.198,
+        "NeuralEngine": 0.802,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.802
+    },
+    "coreml-reference-gpu_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.198,
+        "NeuralEngine": 0.802,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.802
+    },
+    "coreml-reference-ane_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s64_BF208C9C-2CD8-4A7A-8A7C-468D1C723189.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.198,
+        "NeuralEngine": 0.802,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.802
+    },
+    "coreml-ane-cpu_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.331,
+        "NeuralEngine": 0.669,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.669
+    },
+    "coreml-ane-gpu_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.331,
+        "NeuralEngine": 0.669,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.669
+    },
+    "coreml-ane-ane_s64": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s64_8CC95B73-C5E7-4C5C-9763-C63FC003B91F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.331,
+        "NeuralEngine": 0.669,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.669
+    },
+    "coreml-reference-cpu_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.398,
+        "NeuralEngine": 0.602,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.602
+    },
+    "coreml-reference-gpu_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.398,
+        "NeuralEngine": 0.602,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.602
+    },
+    "coreml-reference-ane_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s128_72DBA402-E2CC-49F5-8F59-22E77726B51F.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.398,
+        "NeuralEngine": 0.602,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.602
+    },
+    "coreml-ane-cpu_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.563,
+        "NeuralEngine": 0.437,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.437
+    },
+    "coreml-ane-gpu_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.563,
+        "NeuralEngine": 0.437,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.437
+    },
+    "coreml-ane-ane_s128": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s128_F6544D5D-E624-44E3-B967-07CF644A3C9D.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.563,
+        "NeuralEngine": 0.437,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.437
+    },
+    "coreml-reference-cpu_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.217,
+        "NeuralEngine": 0.783,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.783
+    },
+    "coreml-reference-gpu_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.217,
+        "NeuralEngine": 0.783,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.783
+    },
+    "coreml-reference-ane_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/reference_s256_C046C87B-575E-4E54-BCE3-F7FAC068C8E1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 236,
+        "CPU": 12,
+        "NeuralEngine": 157
+      },
+      "total_ops": 405,
+      "executing_ops": 169,
+      "ane_fraction": 0.929,
+      "cpu_fraction": 0.071,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.217,
+        "NeuralEngine": 0.783,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.783
+    },
+    "coreml-ane-cpu_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.348,
+        "NeuralEngine": 0.652,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.652
+    },
+    "coreml-ane-gpu_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.348,
+        "NeuralEngine": 0.652,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.652
+    },
+    "coreml-ane-ane_s256": {
+      "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ane_s256_DCEDEE65-19D9-43ED-8F73-C992C2CAE4F1.mlmodelc",
+      "op_counts": {
+        "Unassigned": 627,
+        "CPU": 15,
+        "NeuralEngine": 483
+      },
+      "total_ops": 1125,
+      "executing_ops": 498,
+      "ane_fraction": 0.97,
+      "cpu_fraction": 0.03,
+      "gpu_fraction": 0.0,
+      "cost_weighted": {
+        "CPU": 0.348,
+        "NeuralEngine": 0.652,
+        "Unassigned": 0.0
+      },
+      "ane_fraction_by_cost": 0.652
+    }
+  }
+}
