@@ -240,6 +240,148 @@ class ANEEncoder(nn.Module):
 
 
 # ==========================================================================
+# Cross-encoders -- same bodies, a CLS head instead of mean pooling
+# ==========================================================================
+#
+# The reranker (ms-marco-MiniLM-L6) is a BertForSequenceClassification: the
+# exact 6-layer/384-dim body above plus a pooler (CLS token -> dense -> tanh)
+# and a 1-logit classifier. Two differences matter for conversion:
+#
+#   * token_type_ids are a real input. A cross-encoder reads "query [SEP]
+#     passage" and the segment embedding is how it tells the two apart --
+#     zeroing it (as the embedders above do) would lobotomise the model.
+#   * The workload is a *batch*: reranking scores 50 pairs per query, so the
+#     interesting fixed shape is (50, seq), not (1, seq). Whether the ANE
+#     keeps a batch-50 graph resident is precisely the open question the
+#     conversion answers.
+
+
+class ReferenceCrossEncoder(nn.Module):
+    """Conventional layout; logits out. One row per (query, passage) pair."""
+
+    layout = "b_s_c"
+
+    def __init__(self, c: BertConfig, seq_len: int | None = None):
+        super().__init__()
+        self.cfg = c
+        self.seq_len = seq_len
+        self.word_emb = nn.Embedding(c.vocab_size, c.hidden_size)
+        self.pos_emb = nn.Embedding(c.max_position, c.hidden_size)
+        self.type_emb = nn.Embedding(c.type_vocab_size, c.hidden_size)
+        self.emb_ln = nn.LayerNorm(c.hidden_size, eps=c.layer_norm_eps)
+        self.layers = nn.ModuleList(ReferenceLayer(c) for _ in range(c.num_layers))
+        self.pooler = nn.Linear(c.hidden_size, c.hidden_size)
+        self.classifier = nn.Linear(c.hidden_size, 1)
+        n_pos = seq_len or c.max_position
+        self.register_buffer(
+            "position_ids", torch.arange(n_pos).unsqueeze(0), persistent=False
+        )
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        token_type_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        pos = self.position_ids if self.seq_len else self.position_ids[:, : input_ids.shape[1]]
+        x = self.word_emb(input_ids) + self.pos_emb(pos) + self.type_emb(token_type_ids)
+        x = self.emb_ln(x)
+
+        m = attention_mask.to(x.dtype)
+        additive = (1.0 - m)[:, None, None, :] * -1e4
+        for layer in self.layers:
+            x = layer(x, additive)
+
+        cls = x[:, 0]  # constant index -- trace-safe
+        pooled = torch.tanh(self.pooler(cls))
+        return self.classifier(pooled).squeeze(-1)
+
+
+class ANECrossEncoder(nn.Module):
+    """Apple layout; the head stays in (B, C, 1, S) until the final flatten."""
+
+    layout = "b_c_1_s"
+
+    def __init__(self, c: BertConfig, seq_len: int | None = None):
+        super().__init__()
+        self.cfg = c
+        self.seq_len = seq_len
+        self.word_emb = nn.Embedding(c.vocab_size, c.hidden_size)
+        self.pos_emb = nn.Embedding(c.max_position, c.hidden_size)
+        self.type_emb = nn.Embedding(c.type_vocab_size, c.hidden_size)
+        self.emb_ln = LayerNormANE(c.hidden_size, c.layer_norm_eps)
+        self.layers = nn.ModuleList(ANELayer(c) for _ in range(c.num_layers))
+        self.pooler = nn.Conv2d(c.hidden_size, c.hidden_size, 1)
+        self.classifier = nn.Conv2d(c.hidden_size, 1, 1)
+        n_pos = seq_len or c.max_position
+        self.register_buffer(
+            "position_ids", torch.arange(n_pos).unsqueeze(0), persistent=False
+        )
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        token_type_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        pos = self.position_ids if self.seq_len else self.position_ids[:, : input_ids.shape[1]]
+        x = self.word_emb(input_ids) + self.pos_emb(pos) + self.type_emb(token_type_ids)
+        x = x.permute(0, 2, 1).unsqueeze(2)  # (B, C, 1, S)
+        x = self.emb_ln(x)
+
+        m = attention_mask.to(x.dtype)
+        additive = ((1.0 - m) * -1e4).unsqueeze(-1).unsqueeze(-1)
+        for layer in self.layers:
+            x = layer(x, additive)
+
+        cls = x[:, :, :, 0:1]  # (B, C, 1, 1); constant slice, trace-safe
+        pooled = torch.tanh(self.pooler(cls))
+        return self.classifier(pooled).flatten(1).squeeze(-1)
+
+
+def load_ce_weights(module: nn.Module, state: dict[str, torch.Tensor]) -> nn.Module:
+    """Populate a cross-encoder from a BertForSequenceClassification checkpoint.
+
+    The body reuses `load_weights` after stripping the `bert.` prefix; only the
+    pooler and classifier are new.
+    """
+    body = {
+        k.removeprefix("bert."): v for k, v in state.items() if k.startswith("bert.")
+    }
+    as_conv = module.layout == "b_c_1_s"
+    load_weights(module, body)
+    _copy_linear(
+        module.pooler, state["bert.pooler.dense.weight"], state["bert.pooler.dense.bias"], as_conv=as_conv
+    )
+    _copy_linear(
+        module.classifier, state["classifier.weight"], state["classifier.bias"], as_conv=as_conv
+    )
+    module.eval()
+    for p in module.parameters():
+        p.requires_grad_(False)
+    return module
+
+
+DEFAULT_CE_MODEL = "cross-encoder/ms-marco-MiniLM-L6-v2"
+
+
+def build_ce(
+    kind: str = "reference",
+    model_name: str = DEFAULT_CE_MODEL,
+    seq_len: int | None = None,
+) -> nn.Module:
+    import warnings
+
+    warnings.filterwarnings("ignore")
+    from transformers import AutoModelForSequenceClassification
+
+    hf = AutoModelForSequenceClassification.from_pretrained(model_name).eval()
+    cfg = BertConfig.from_hf(hf.config)
+    cls = {"reference": ReferenceCrossEncoder, "ane": ANECrossEncoder}[kind]
+    return load_ce_weights(cls(cfg, seq_len=seq_len), hf.state_dict())
+
+
+# ==========================================================================
 # Weight loading
 # ==========================================================================
 

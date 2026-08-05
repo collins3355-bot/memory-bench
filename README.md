@@ -15,9 +15,10 @@ memories? — the quality eval below says: a retrieval-trained encoder over smal
 chunks reaches 0.91 evidence-complete@10 on LongMemEval-S, retrieving *wider*
 (k=50 over turn-sized chunks) solves even multi-session assembly at 0.98, a
 22M-parameter cross-encoder rerank compresses that wide net back to 0.93
-complete@10 in a ~2.3k-token context, and naive recency weighting is actively
+complete@10 in a ~2.3k-token context, the full retrieve-and-rerank pipeline
+measures ~27-35ms — inside budget — and naive recency weighting is actively
 destructive with every encoder tested. What survives as genuinely open:
-multi-hop questions, and running the reranker inside the latency budget.
+multi-hop questions, which no amount of ranking fixes.
 
 ## The claims under test
 
@@ -246,6 +247,21 @@ First stage retrieves 50 turn chunks; `ms-marco-MiniLM-L6` reranks them. `ceilin
 | LoCoMo / e5-small | `vector` | 0.745 → **0.784** | +0.039 | 0.817 → **0.848** | 0.975 | 387 → 381 |
 | LoCoMo / e5-small | `hybrid` | 0.748 → **0.788** | +0.040 | 0.828 → **0.849** | 0.964 | 372 → 381 |
 
+### Rerank latency — one batch of 50 pairs
+
+The price of the rerank stage, per query, at two padding buckets. Converted at the true workload shape (batch 50), fp16, fixed shapes; per-op compute plans live in the JSON's `conversion_plans`.
+
+| backend | seq 64 p50 | seq 64 p99 | seq 128 p50 | seq 128 p99 |
+|---|--:|--:|--:|--:|
+| `coreml-referengpu` | 13.0 ms | 16.6 ms | 26.0 ms | 26.5 ms |
+| `torch-mps` | 18.7 ms | 19.1 ms | 42.3 ms | 42.8 ms |
+| `coreml-ane-gpu` | 19.1 ms | 20.7 ms | 35.0 ms | 36.4 ms |
+| `coreml-ane-ane` | 20.5 ms | 24.5 ms | 32.5 ms | 34.2 ms |
+| `coreml-referenane` | 21.7 ms | 28.8 ms | 48.1 ms | 52.2 ms |
+| `coreml-referencpu` | 31.0 ms | 32.2 ms | 69.9 ms | 72.8 ms |
+| `coreml-ane-cpu` | 31.8 ms | 33.2 ms | 71.2 ms | 94.4 ms |
+| `torch-cpu` | 81.8 ms | 92.9 ms | 178.2 ms | 186.4 ms |
+
 ### Encoder sweep — longmemeval_s
 
 Same grid, dense encoder swapped: MiniLM-L6 (22.7M, mean-pool) vs e5-small-v2 (33M, 12 layers, asymmetric query/passage prefixes). complete@10; Δ is e5 minus MiniLM.
@@ -321,12 +337,14 @@ validated on a small corpus.
 and blows the budget. That is where an index genuinely earns its complexity —
 not before.
 
-**The GPU is the wrong target, at every sequence length.** `coreml-*-gpu` runs
-2.7-8.6ms against 0.93-1.59ms on the ANE, and `torch-mps` sits at 5-8ms with a
-p99 as high as 28.7ms, nearly flat across sequence length — the signature of
-dispatch overhead rather than compute. A 22M-parameter model at batch 1 cannot
-fill a 32-core GPU. Using it costs power, heat, and contention with the user's
-actual work, and buys nothing.
+**The GPU is the wrong target for batch-1 query embedding, at every sequence
+length.** `coreml-*-gpu` runs 2.7-8.6ms against 0.93-1.59ms on the ANE, and
+`torch-mps` sits at 5-8ms with a p99 as high as 28.7ms, nearly flat across
+sequence length — the signature of dispatch overhead rather than compute. A
+22M-parameter model at batch 1 cannot fill a 32-core GPU. Using it costs
+power, heat, and contention with the user's actual work, and buys nothing.
+(The qualifier matters: at the rerank stage's batch-50 shape the same GPU is
+the *fastest* unit — see the rerank latency section below.)
 
 **Apple's ANE layout matters most where you would least expect it.** The
 `ane` variant holds 97% Neural Engine residency at every sequence length. The
@@ -476,12 +494,19 @@ validated 0.9ms ANE path. Spend the model budget on the reranker, not the
 retriever. Two costs temper the whole rerank story. Multi-hop is *not* a
 ranking problem: LoCoMo cat1 improves (0.377 → 0.473 at k=10 with MiniLM) but
 stays the worst number on the board — those questions need query
-decomposition, not better scoring. And the latency bill is real: a batch of
-50 pairs costs 54.5ms in eager PyTorch on CPU — alone exceeding the 50ms
-budget — or 17.6ms on MPS. The reranker is a 6-layer BERT, the exact
-architecture class this repo already converts to the Neural Engine at ~7-13x
-eager-CPU speed at these sequence lengths, so CE-on-ANE is the obvious next
-perf milestone rather than an open question.
+decomposition, not better scoring. And the latency bill is real but payable —
+with a twist that inverts the embedder finding. Converting the CE to CoreML at
+its true workload shape (batch 50, not batch 1) and measuring all execution
+paths: **the GPU wins the rerank stage** — 13.0ms p50 at seq 64 (26.0ms at
+seq 128) vs 20.5ms on the ANE and 81.8ms eager-CPU. A 50-pair batch is finally
+enough work to fill a 32-core GPU; the batch-1 dispatch-overhead argument that
+disqualified it for embedding does not apply here. The ANE stays highly
+resident even at batch 50 (97.6% of executing ops; 94-97% cost-weighted) but
+scales worse with batch than the GPU does. So the
+pipeline arithmetic gives the engine a genuine choice: retrieve (14.1ms) +
+GPU rerank (13.0ms) ≈ **27ms** for the fastest path, or an all-ANE/CPU path at
+≈ 35ms that never touches the GPU the user's own work is running on. Both fit
+the 50ms budget; the choice is contention policy, not feasibility.
 
 **LoCoMo is the stress test, not an echo.** Its shape (10 very long two-speaker
 histories, per-turn evidence, 455 of 1,986 questions adversarial and excluded)

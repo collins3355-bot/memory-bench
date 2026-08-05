@@ -249,6 +249,32 @@ def rerank_section(files: dict[str, dict]) -> list[str]:
     return out
 
 
+def rerank_perf_section(files: dict[int, dict]) -> list[str]:
+    """Latency of one 50-pair rerank batch across execution paths."""
+    out = [
+        "### Rerank latency — one batch of 50 pairs",
+        "",
+        "The price of the rerank stage, per query, at two padding buckets. "
+        "Converted at the true workload shape (batch 50), fp16, fixed shapes; "
+        "per-op compute plans live in the JSON's `conversion_plans`.",
+        "",
+        "| backend | seq 64 p50 | seq 64 p99 | seq 128 p50 | seq 128 p99 |",
+        "|---|--:|--:|--:|--:|",
+    ]
+    labels: dict[str, dict[int, dict]] = {}
+    for seq, d in files.items():
+        for b in d["backends"]:
+            labels.setdefault(b["label"].replace(f"b50_s{seq}-", ""), {})[seq] = b
+    for label in sorted(labels, key=lambda l: labels[l].get(64, labels[l].get(128, {})).get("p50", 9e9)):
+        cells = []
+        for seq in (64, 128):
+            b = labels[label].get(seq)
+            cells += [f"{b['p50']:.1f} ms", f"{b['p99']:.1f} ms"] if b else ["—", "—"]
+        out.append(f"| `{label}` | " + " | ".join(cells) + " |")
+    out.append("")
+    return out
+
+
 def main() -> int:
     parts: list[str] = [MARKER, ""]
     for name, fn in (
@@ -286,6 +312,14 @@ def main() -> int:
             rerank_files[label] = d
     if rerank_files:
         parts += rerank_section(rerank_files)
+
+    perf_files = {}
+    for seq, name in ((64, "rerank_perf_s64"), (128, "rerank_perf")):
+        d = _load(name)
+        if d:
+            perf_files[seq] = d
+    if perf_files:
+        parts += rerank_perf_section(perf_files)
     for dataset in ("longmemeval_s", "locomo"):
         base, e5 = _load(f"quality_{dataset}"), _load(f"quality_{dataset}_e5-small")
         if base and e5:

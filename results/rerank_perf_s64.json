@@ -1,0 +1,169 @@
+{
+  "batch": 50,
+  "seq_len": 64,
+  "machine": {
+    "chip": "Apple M1 Max",
+    "arch": "arm64",
+    "macos": "26.4",
+    "kernel": "25.4.0",
+    "python": "3.12.13",
+    "ram_gb": 64.0,
+    "p_cores": "8",
+    "e_cores": "2",
+    "logical_cpus": "10",
+    "numpy": "2.5.1",
+    "blas_name": "accelerate",
+    "blas_version": "unknown",
+    "torch_version": "2.13.0",
+    "coremltools_version": "9.0",
+    "usearch_version": "2.26.0",
+    "transformers_version": "5.14.1",
+    "mps_available": true
+  },
+  "backends": [
+    {
+      "label": "torch-cpu",
+      "n": 60,
+      "p50": 81.759792,
+      "p90": 88.017042,
+      "p99": 92.893333,
+      "minimum": 76.996959,
+      "mean": 82.91945211666666,
+      "stdev": 4.042852991188433,
+      "total_s": 4.975327708991244,
+      "notes": {}
+    },
+    {
+      "label": "torch-mps",
+      "n": 60,
+      "p50": 18.734083,
+      "p90": 18.95,
+      "p99": 19.084334,
+      "minimum": 18.451916,
+      "mean": 18.844122216666666,
+      "stdev": 0.6848453672090775,
+      "total_s": 1.1307886249851435,
+      "notes": {}
+    },
+    {
+      "label": "coreml-referenb50_s64-cpu",
+      "n": 60,
+      "p50": 31.019875,
+      "p90": 31.825334,
+      "p99": 32.248542,
+      "minimum": 30.222292,
+      "mean": 31.08505705,
+      "stdev": 0.4969678375236647,
+      "total_s": 1.8652524169301614,
+      "notes": {}
+    },
+    {
+      "label": "coreml-referenb50_s64-gpu",
+      "n": 77,
+      "p50": 12.959,
+      "p90": 13.226792,
+      "p99": 16.609167,
+      "minimum": 12.648667,
+      "mean": 13.08748483116883,
+      "stdev": 0.6184971201265544,
+      "total_s": 1.0079418329987675,
+      "notes": {}
+    },
+    {
+      "label": "coreml-referenb50_s64-ane",
+      "n": 60,
+      "p50": 21.705708,
+      "p90": 25.474166,
+      "p99": 28.815584,
+      "minimum": 20.5725,
+      "mean": 22.819251383333334,
+      "stdev": 2.12517436027287,
+      "total_s": 1.3693420420167968,
+      "notes": {}
+    },
+    {
+      "label": "coreml-ane-cpu",
+      "n": 60,
+      "p50": 31.794333,
+      "p90": 32.72075,
+      "p99": 33.169959,
+      "minimum": 30.399958,
+      "mean": 31.871293766666668,
+      "stdev": 0.6410080069671094,
+      "total_s": 1.9124007080681622,
+      "notes": {}
+    },
+    {
+      "label": "coreml-ane-gpu",
+      "n": 60,
+      "p50": 19.091792,
+      "p90": 20.079042,
+      "p99": 20.653084,
+      "minimum": 18.7445,
+      "mean": 19.432918716666666,
+      "stdev": 0.8011278940482204,
+      "total_s": 1.1661271249176934,
+      "notes": {}
+    },
+    {
+      "label": "coreml-ane-ane",
+      "n": 60,
+      "p50": 20.532916,
+      "p90": 22.948542,
+      "p99": 24.490708,
+      "minimum": 17.770291,
+      "mean": 20.741122216666668,
+      "stdev": 1.6264470599735494,
+      "total_s": 1.244660917087458,
+      "notes": {}
+    }
+  ],
+  "conversion_plans": {
+    "ce_reference_b50_s64": {
+      "package": "models/ce_reference_b50_s64.mlpackage",
+      "ok": true,
+      "plan": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ce_reference_b50_s64.mlmodelc",
+        "op_counts": {
+          "Unassigned": 238,
+          "CPU": 14,
+          "NeuralEngine": 153
+        },
+        "total_ops": 405,
+        "executing_ops": 167,
+        "ane_fraction": 0.916,
+        "cpu_fraction": 0.084,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.059,
+          "NeuralEngine": 0.941,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.941
+      }
+    },
+    "ce_ane_b50_s64": {
+      "package": "models/ce_ane_b50_s64.mlpackage",
+      "ok": true,
+      "plan": {
+        "compiled_path": "/var/folders/54/4chn576n5qs2b29hg8v5w4c40000gn/T/ce_ane_b50_s64.mlmodelc",
+        "op_counts": {
+          "Unassigned": 637,
+          "CPU": 12,
+          "NeuralEngine": 483
+        },
+        "total_ops": 1132,
+        "executing_ops": 495,
+        "ane_fraction": 0.976,
+        "cpu_fraction": 0.024,
+        "gpu_fraction": 0.0,
+        "cost_weighted": {
+          "CPU": 0.059,
+          "NeuralEngine": 0.941,
+          "Unassigned": 0.0
+        },
+        "ane_fraction_by_cost": 0.941
+      }
+    }
+  }
+}
