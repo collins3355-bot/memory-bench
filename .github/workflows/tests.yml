@@ -1,0 +1,18 @@
+name: tests
+on: [push, pull_request]
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # The unit tests exercise ranking, metrics, chunking and date parsing --
+      # numpy is their only runtime dependency. torch/coremltools are imported
+      # lazily by code paths the tests do not touch, so CI stays seconds-fast
+      # and runs on any OS. The perf numbers themselves are hardware-specific
+      # and are NOT reproduced in CI; that is what results/*.json is for.
+      - run: pip install numpy
+      - run: python tests/test_quality.py
